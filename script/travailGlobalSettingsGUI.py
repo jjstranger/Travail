@@ -29,7 +29,7 @@ def svPrefs():
 	tvlRoot=pmc.textFieldButtonGrp("travailRootPath",q=1,fi=1)
 	lang=str(int(pmc.optionMenuGrp("lan",q=1,sl=1))-1)
 	prefFileContent="import getpass\nusr='"+usrNm+"'\nusrShort='"+usrShNm+"'\nusrJob='"+usrJob+"'\nprjRoot='"+prjRoot+"'\ntravailRoot='"+tvlRoot+"'\nlang="+lang+"\nloadSettingsState=1"
-	confFileOpen=open(travailSettingsFile,"w")
+	with open(travailSettingsFile,"w") as confFileOpen
 	confFileOpen.write(prefFileContent)
 	confFileOpen.close()
 	
