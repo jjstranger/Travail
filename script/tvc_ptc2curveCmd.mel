@@ -1,0 +1,31 @@
+string $sel[]=`ls -sl`;
+int $i;
+string $cmd="curve -d 3";
+float $pos[];
+string $ptc;
+int $ct;
+for ($item in $sel)
+{
+    if(`objectType $item`=="nParticle")
+    {
+        string $headCmd="nParticle";
+    }
+    else if(`objectType $item`=="particle")
+    {
+        string $headCmd="particle";
+    }
+    else
+    {
+        error "Did U select EXACTLLY a Particle or NParticle Object??!!";
+        break;
+    }
+$ct=`nParticle -ct -q $item`;
+for($i=0;$i<$ct;$i++)
+    {
+        $pos= eval ($headCmd+" -attribute position -id $i -q $item");
+        $ptc=" -p "+$pos[0]+" "+$pos[1]+" "+$pos[2];
+        $cmd=$cmd+$ptc;
+    }
+eval $cmd;
+$cmd="curve -d 3"
+}

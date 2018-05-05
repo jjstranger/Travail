@@ -1,0 +1,4 @@
+string $scrptFolder=`internalVar -userScriptDir`+"userSetup.mel";
+sysFile -cp $scrptFolder "T:/tvcServe/RnD/ppl/ppl_script/userSetup.mel";
+source "T:/tvcServe/RnD/ppl/ppl_script/userSetup.mel";
+print "Load TVC-Task OK!";

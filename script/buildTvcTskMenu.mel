@@ -1,0 +1,178 @@
+python "import tvc_abcExchg";
+source "T:/tvcServe/RnD/ppl/ppl_script/tvc_addTvcTsk.mel";
+source "T:/tvcServe/RnD/ppl/ppl_script/tvc_attrsBatchTool.mel";
+source "T:/tvcServe/RnD/ppl/ppl_script/tvc_repairRenderSettingWindow.mel";
+
+global proc buildAddTvcTskMenu()
+{
+    ModCreateMenu mainCreateMenu;
+    if(`menuItem -ex addTvcItm`)
+    {
+        deleteUI -menuItem addTvcItm;
+    }
+    if(`menuItem -ex addTvcShotMenu`)
+    {
+        deleteUI -menuItem addTvcShotMenu;
+    }
+    if(`menuItem -ex addTvcAssMenu`)
+    {
+        deleteUI -menuItem addTvcAssMenu;
+    }
+    
+    
+    if (`about -v`=="2014")
+    {
+        menuItem  -d 1 -p mainCreateMenu addTvcItm;
+    }
+    else
+    {
+        menuItem  -d 1 -p mainCreateMenu -dl "Add TVC Items" addTvcItm;
+    }
+        
+    menuItem  -l "Add TVC Shot..." -p mainCreateMenu -c "addTvcShotUI($tvcRoot)" -ann "添加镜头文件夹结构" addTvcShotMenu;
+    menuItem  -l "Add TVC Asset..." -p mainCreateMenu -c "addTvcAssUI($tvcRoot)" -ann "添加资产文件夹结构" addTvcAssMenu;
+}
+
+
+global proc buildTvcAbcCacheMenu()
+{
+    if(`menuItem -ex tvcAbcTsk`)
+    {
+        deleteUI -menuItem tvcAbcTsk;
+    }
+    if(`menuItem -ex tvcAbcImpMenuItm`)
+    {
+        deleteUI -menuItem tvcAbcImpMenuItm;
+    }
+    if(`menuItem -ex tvcAbcExpMenuItm`)
+    {
+        deleteUI -menuItem tvcAbcExpMenuItm;
+    }
+    
+    if (`about -v`=="2014")
+    {
+        menuItem -d 1 -p mainPipelineCacheMenu tvcAbcTsk;
+    }
+    else
+    {
+        menuItem -d 1 -p mainPipelineCacheMenu -dl "TVC Alembic Exchange" tvcAbcTsk;
+    }
+    
+    menuItem -l "#TVC Abc Cache import with shader" -en 0 -p mainPipelineCacheMenu -c "python \"tvc_abcExchg.importBrowse()\"" -ann "带材质导入ABC缓存" tvcAbcImpMenuItm;
+    menuItem -l "#TVC Abc Cache export with shader..." -en 0 -p mainPipelineCacheMenu -c "python \"tvc_abcExchg.tvc_abcExpUI()\"" -ann "带材质导出ABC缓存" tvcAbcExpMenuItm;
+}
+
+global proc buildTvcTaskMenu()
+{
+    if(`menu -ex tvcTaskMenu`)
+    {
+        deleteUI -menu tvcTaskMenu;
+    }
+    menu -l "TVC-Task" -p MayaWindow -to 1 tvcTaskMenu;
+    
+    /////Add Tasks
+    if(`menuItem -ex addTvcItmM`)
+    {
+        deleteUI -menuItem addTvcItmM;
+    }
+    if(`menuItem -ex addTvcShotMenuM`)
+    {
+        deleteUI -menuItem addTvcShotMenuM;
+    }
+    if(`menuItem -ex addTvcAssMenuM`)
+    {
+        deleteUI -menuItem addTvcAssMenuM;
+    }
+    
+    
+    if (`about -v`=="2014")
+    {
+        menuItem -d 1 -p tvcTaskMenu addTvcItmM;
+    }
+    else
+    {
+        menuItem -d 1 -p tvcTaskMenu -dl "Add TVC Items" addTvcItmM;
+    }
+        
+    menuItem -l "Add TVC Shot..." -p tvcTaskMenu -c "addTvcShotUI($tvcRoot)" -ann "添加镜头文件夹结构" addTvcShotMenuM;
+    menuItem -l "Add TVC Asset..." -p tvcTaskMenu -c "addTvcAssUI($tvcRoot)" -ann "添加资产件夹结构" addTvcAssMenuM;
+    
+    /////Utilities
+    if(`menuItem -ex tvcUtils`)
+    {
+        deleteUI -menuItem tvcUtils;
+    }
+    
+    if (`about -v`=="2014")
+    {
+        menuItem -d 1 -p tvcTaskMenu tvcUtilsItmM;
+    }
+    else
+    {
+        menuItem -d 1 -p tvcTaskMenu -dl "TVC Utilities" tvcUtilsItmM;
+    }
+    
+    if(`menuItem -ex tvcAttrsBatchChgrMenuItmM`)
+    {
+        deleteUI -menuItem tvcAttrsBatchChgrMenuItmM;
+    }
+    menuItem -l "Attrs Batch Changer..." -p tvcTaskMenu -c "tvcBatchAttrts()" -ann "批量修改物体们的属性" tvcAttrsBatchChgrMenuItmM;
+    menuItem -l "Repair Render Setting Window" -p tvcTaskMenu -c"rpRndStWin()" -ann "修复渲染设置窗口空白的问题" tvcRpRndStWinMenuItmM;
+    
+    if(`menuItem -ex tvcAbcTskM`)
+    {
+        deleteUI -menuItem tvcAbcTskM;
+    }
+    if(`menuItem -ex tvcAbcImpMenuItmM`)
+    {
+        deleteUI -menuItem tvcAbcImpMenuItmM;
+    }
+    if(`menuItem -ex tvcAbcExpMenuItmM`)
+    {
+        deleteUI -menuItem tvcAbcExpMenuItmM;
+    }
+    
+    if (`about -v`=="2014")
+    {
+        menuItem -d 1 -p tvcTaskMenu tvcAbcTskM;
+    }
+    else
+    {
+        menuItem -d 1 -p tvcTaskMenu -dl "TVC Alembic Exchange" tvcAbcTskM;
+    }
+    
+    menuItem -l "#Import abc with shader" -en 0 -p tvcTaskMenu -c "python \"tvc_abcExchg.importBrowse()\"" -ann "带材质导入ABC缓存" tvcAbcImpMenuItmM;
+    menuItem -l "#Export abc with shader..." -en 0 -p tvcTaskMenu -c "python \"tvc_abcExchg.tvc_abcExpUI()\"" -ann "带材质导出ABC缓存" tvcAbcExpMenuItmM;
+
+    if(`menuItem -ex tvcTskHlpSp`)
+    {
+        deleteUI -menuItem tvcTskHlpSp;
+    }
+    
+    if(`menuItem -ex tvcTskHlpItmM`)
+    {
+        deleteUI -menuItem tvcTskHlpItmM;
+    }
+
+
+    if (`about -v`=="2014")
+    {
+        menuItem -d 1 -p tvcTaskMenu tvcTskHlpSp;
+    }
+    else
+    {
+        menuItem -d 1 -p tvcTaskMenu tvcTskHlpSp;
+    }
+
+    menuItem -l "Help" -p tvcTaskMenu -c "system \" start T:/tvcServe/RnD/ppl/ppl_script/TVC-Task_Help.pdf\";" tvcTskHlpItmM;
+
+}
+
+buildAddTvcTskMenu;
+ModCreateMenu mainCreateMenu;    
+
+buildTvcAbcCacheMenu();
+ModCreateMenu mainPipelineCacheMenu; 
+
+buildTvcTaskMenu();
+ModCreateMenu tvcTaskMenu;
