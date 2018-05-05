@@ -1,0 +1,14 @@
+global proc loadTravail()
+{
+	string $startScript=`internalVar -userScriptDir`+"userSetup.mel";
+	string $currentFileLocation=`whatIs "loadTravail"`;
+	
+	string $currentFileLoc2[];
+	string $currentFileTkn=`tokenize $currentFileLocation ":" $currentFileLoc2`;
+	string $currentFilePath=`strip (dirname($currentFileLoc2[1]+":"+$currentFileLoc2[2])+"/script/")`;
+	string $currentFileFullPath= $currentFilePath+"userSetup.mel";
+	//sysFile -cp $startScript $currentFileFullPath;
+	eval ("source \""+$currentFileFullPath+"\"");
+	//print "Load Travail OK!";
+}
+loadTravail();

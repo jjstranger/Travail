@@ -1,45 +1,37 @@
-proc cpScript2Local()
+proc setScriptPath()
 {
-    string $scrptFolder=`internalVar -userScriptDir`;
-    //print ($scrptFolder+"tvc_abcExchg.py");
-    if (`file -q -ex ($scrptFolder+"tvc_abcExchg.py")`==0)
-    {
-       sysFile -cp ($scrptFolder+"tvc_abcExchg.*") "T:/tvcServe/RnD/ppl/ppl_script/tvc_abcExchg.*";
-    }
-    sysFile -del ($scrptFolder+"tvc_abcExchg.py");
-    sysFile -cp ($scrptFolder+"tvc_abcExchg.py") "T:/tvcServe/RnD/ppl/ppl_script/tvc_abcExchg.py";
-}
+    string $dlvFileLocation=`whatIs "loadTravail"`;
+	string $dlvFileLoc2[];
+	string $dlvFileTkn=`tokenize $dlvFileLocation ":" $dlvFileLoc2`;
+	string $currentScriptPath=`strip (dirname($dlvFileLoc2[1]+":"+$dlvFileLoc2[2])+"/script/")`;
 
-proc setPyEnvPath()
-{
-    string $pyPath=`getenv "PYTHONPATH"`;
+	string $scriptPath=`getenv "MAYA_SCRIPT_PATH"`;
+	string $scriptPathArr[];
+    tokenize $scriptPath ";" $scriptPathArr;
+	if (stringArrayContains($currentScriptPath,$scriptPathArr)==0)
+    {
+        $scriptPath+=(";"+$scriptPath);
+        putenv "MAYA_SCRIPT_PATH" $scriptPath;
+        
+    }
+    system("set MAYA_SCRIPT_PATH="+$scriptPath);
+    clear $scriptPathArr;
+    
+    string $pyPath =`getenv "PYTHONPATH"`;
     string $pyPathArr[];
     tokenize $pyPath ";" $pyPathArr;
-    //print $pyPathArr;
-    if (stringArrayContains("T:/tvcServe/RnD/ppl/ppl_script",$pyPathArr)==0)
+    if (stringArrayContains($currentScriptPath,$pyPathArr)==0)
     {
-        $pyPath+=";T:/tvcServe/RnD/ppl/ppl_script";
+        $pyPath+=(";"+$currentScriptPath);
         putenv "PYTHONPATH" $pyPath;
         
     }
     system("set PYTHONPATH="+$pyPath);
     clear $pyPathArr;
-    //print $pyPathArr;
+    eval ("source \""+$currentScriptPath+"buildTarvailMenu.mel\"");
+
 }
 
-cpScript2Local();
-setPyEnvPath();
-
-python "from tvc_abcExchg import *";
-source "T:/tvcServe/RnD/ppl/ppl_script/buildTvcTskMenu.mel";
+setScriptPath();
 
    
-ModCreateMenu mainCreateMenu;    
-buildAddTvcTskMenu;
-
-ModCreateMenu mainPipelineCacheMenu; 
-buildTvcAbcCacheMenu();
-
-//ModCreateMenu tvcTaskMenu;
-buildTvcTaskMenu();
-
