@@ -221,7 +221,19 @@ def anMasterCamLsting():
         
         pmc.menuItem('camItm'+str(i),p='anMasterCamLst',l=item[0])
         i+=1
-               
+#####ios
+def anCamChgCmd():
+    if (pmc.optionMenu(‘anMasterCamLst’,q=1,sl=1))==1:
+    pmc.button(‘anRnmCamBtn’,e=1,en=0)
+    pmc.button(‘anLckCamBtn’,e=1,en=0)
+    pmc.button(‘anMasterCamBtn3’,e=1,en=0)
+    
+    else:
+    pmc.button(‘anRnmCamBtn’,e=1,en=1)
+    pmc.button(‘anLckCamBtn’,e=1,en=1)
+    pmc.button(‘anMasterCamBtn3’,e=1,en=1)
+    
+###%%ios
 def anMasterCamRename():
     if pmc.optionMenu("anMasterCamLst",q=1,sl=1)==1:
         pmc.confirmDialog (t='No Camera Selected.',m='Choose a Camera Ok?')
@@ -517,19 +529,19 @@ def tvcChkWrkUI():
     pmc.text('anScTx',p='anScShLyt',l='Scene',w=120)
     pmc.optionMenu ('anScLst',p='anScShLyt',cc='getShLst()')
     pmc.text('anShTx',p='anScShLyt',l='Shot',w=80)
-    pmc.optionMenu ('anShLst',p='anScShLyt',cc='')
+    pmc.optionMenu ('anShLst',p='anScShLyt',cc='chAnFlNm()')
     
-    pmc.rowLayout('anAdShRWLyt',p='anChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3, 'center'], [4, 'center'], [5, 'center']],en=1,cw=[[1, 35],[2, 84],[3, 100],[4, 100],[5, 100]],nc=5)
-    pmc.separator()
-    pmc.checkBox('addShChkBx',v=0,l='Add shots',p='anAdShRWLyt',w=80)
+    #pmc.rowLayout('anAdShRWLyt',p='anChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3, 'center'], [4, 'center'], [5, 'center']],en=1,cw=[[1, 35],[2, 84],[3, 100],[4, 100],[5, 100]],nc=5)
+    #pmc.separator()
+    #pmc.checkBox('addShChkBx',v=0,l='Add shots',p='anAdShRWLyt',w=80)
     #onc='pmc.optionMenu ("addAssType",e=1,en=1);pmc.textField("assNm",e=1,en=1);pmc.button("annAssBtn",e=1,en=1);pmc.optionMenu ("assTypLs",e=1,en=0)',ofc='pmc.optionMenu("addAssType",e=1,en=0);pmc.textField("assNm",e=1,en=0);pmc.button("annAssBtn",e=1,en=0);pmc.optionMenu ("assTypLs",e=1,en=1)')
     
-    pmc.optionMenu('adScLst',p='anAdShRWLyt',w=90,en=0)
-    pmc.menuItem(l="SC001")
-    pmc.menuItem(l="SC002")
-    pmc.menuItem(l="SC003")
-    pmc.textField('anNm',pht="Give a asset name here.",w=200,p='anAdShRWLyt',en=0)
-    pmc.button('annAssBtn',l="Add",c="",w=100,p='anAdShRWLyt',en=0)
+    #pmc.optionMenu('adScLst',p='anAdShRWLyt',w=90,en=0)
+    #pmc.menuItem(l="SC001")
+    #pmc.menuItem(l="SC002")
+    #pmc.menuItem(l="SC003")
+    #pmc.textField('anNm',pht="Give a asset name here.",w=200,p='anAdShRWLyt',en=0)
+    #pmc.button('annAssBtn',l="Add",c="",w=100,p='anAdShRWLyt',en=0)
     
     pmc.rowLayout('anSvFlLyt',p='anChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3, 'center'], [4, 'center'], [5, 'center']],en=1,cw=[[1, 35],[2, 84],[3, 100],[4, 100],[5, 100]],nc=5)
     pmc.separator()
@@ -547,7 +559,7 @@ def tvcChkWrkUI():
 
     #pmc.button('addAss',l="Add it",rs=1,w=100,c="goAddAssetFolders($tvcRoot)",p='addAssBtLyt')
     
-    pmc.tabLayout('tvcChkTabLyt',e=1,tli=[[1, 'Model'], [2, 'Animation']])
+    pmc.tabLayout('tvcChkTabLyt',e=1,tli=[[1, 'Asset'], [2, 'Shot']])
     pmc.showWindow('TVC_SubChk')
 
 tvcChkWrkUI()
