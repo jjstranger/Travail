@@ -223,15 +223,15 @@ def anMasterCamLsting():
         i+=1
 #####ios
 def anCamChgCmd():
-    if (pmc.optionMenu(‘anMasterCamLst’,q=1,sl=1))==1:
-    pmc.button(‘anRnmCamBtn’,e=1,en=0)
-    pmc.button(‘anLckCamBtn’,e=1,en=0)
-    pmc.button(‘anMasterCamBtn3’,e=1,en=0)
+    if (pmc.optionMenu('anMasterCamLst',q=1,sl=1))==1:
+    pmc.button('anRnmCamBtn',e=1,en=0)
+    pmc.button('anLckCamBtn',e=1,en=0)
+    pmc.button('anMasterCamBtn3',e=1,en=0)
     
     else:
-    pmc.button(‘anRnmCamBtn’,e=1,en=1)
-    pmc.button(‘anLckCamBtn’,e=1,en=1)
-    pmc.button(‘anMasterCamBtn3’,e=1,en=1)
+    pmc.button('anRnmCamBtn',e=1,en=1)
+    pmc.button('anLckCamBtn',e=1,en=1)
+    pmc.button('anMasterCamBtn3',e=1,en=1)
     
 ###%%ios
 def anMasterCamRename():
@@ -320,7 +320,40 @@ def anUnusdSL():
     getDirtLayers=mdUnusdChk()
     pmc.select(getDirtLayers)
 
+def txImgChk():
+    txImgLst=pmc.ls(typ='file')
+    dirtTxImgLst=[]
+    print '========== Texture Images Check ==========\n'
+    for item in txImgLst:
+        if os.path.exists(pmc.getAttr(item+'.fileTextureName'))==0:
+        print pmc.getAttr(item+'.fileTextureName')+' is missing.'
+        dirtTxImgLst.append(item)
+    if len(dirtTxImgLst)>0:
+        pmc.textField('txChkTxF',e=1,tx=str(len(dirtTxImgLst))+' missing textures.',bgc=(1,0,0))
+        pmc.textField('anTxChkTxF',e=1,tx=str(len(dirtTxImgLst))+' missing textures.',bgc=(1,0,0))
+    else:
+        pmc.textField('txChkTxF',e=1,tx='Good',bgc=(0,1,0))
+        pmc.textField('anTxChkTxF',e=1,tx='Good',bgc=(0,1,0))
+        return dirtTxImgLst
+        
+def txDCC():
+    getTxNodNm=pmc.textScrollList('txLst',q=1,sl=1)[0].split('    ')
+    pmc.select(getTxNodNm[1])
+    pmc.runtime.AttributeEditor()
 
+def txImgDtBtn(lanSW):
+    pmc.runtime.FilePathEditor()
+    
+def txImgSlBtn():
+    getDiirtTxImgLst=txImgChk()
+    pmc.select(getDiirtTxImgLst)
+    
+def txPathResetBtn():
+    getTxSlLs=pmc.textScrollList('txLst',q=1,si=1)
+	for item in getTxSlLs:
+	    nodeNm=item.split('    ')[1]
+	    txPath=item.split('    ')[2]
+    
 def getPrjLst(tvcRoot):
 
     prjList=pmc.getFileList(folder=tvcRoot,fs="3???_*")
@@ -388,11 +421,39 @@ def getShLst():
         
 def svAssFile():
     getPrjNm=pmc.optionMenu ('prjLst',q=1,v=1)
-    #getAssType=
+    assLst=pmc.optionMenu('assTypLs',q=1,ill=1)
+    getAssNm= pmc.optionMenu('assTypLs',q=1,v=1)
+    getAssSlId=pmc.optionMenu('assTypLs',q=1,sl=1)
+    getAssTypData=pmc.menuItem(assLst[getAssSlId -1],q=1,da=1)
+    if getAssTypData==0:
+    	asItmTyp='characters'
+    if getAssTypData==1:
+    	asItmTyp='props'
+    if getAssTypData==2:
+    	asItmTyp='sets'
+
     getFileTyp=pmc.optionMenu ('asSvFlType',q=1,v=1)
     getFileNm=pmc.textField('asflNm',q=1,tx=1)
-    #pmc.saveAs(tvcRoot+getPrjNm+'/VFX/assets/models/'+asItmTyp+'/'+getFileTyp+'/'+getFileNm)     
-    print (tvcRoot+getPrjNm+'/VFX/assets/models/'+'asItmTyp'+'/'+getFileTyp+'/'+getFileNm)
+    #pmc.saveAs(tvcRoot+getPrjNm+'/VFX/assets/models/'+asItmTyp+'/'+getFileTyp+'/'+getFileNm) 
+    AssetFileName=tvcRoot +getPrjNm+'/VFX/assets/models'+asItmTyp+'/'+getAssNm+'/'+getFileTyp+'/'+getFileNm+'.mb'
+    AssetHisPath=tvcRoot +getPrjNm+'/VFX/assets/models'+asItmTyp+'/'+getAssNm+'/'+getFileTyp+'/pubHistory/'
+    if os.path.exists(AssetFileName):
+    	if os.path.exists(AssetHisPath)==0:
+    		os.mkdir(AssetHisPath)
+    		pmc.sysFile(AssetFileName,ren=AssetHisPath+getFileNm+'_v001'+'.mb')
+    	else:
+    		assPubFlHisLst=pmc.getFileList(folder=AssetHisPath,fs=getFileNm+'_v???.mb')
+    		if len(list(assPubFlHisLst))>0:
+    			maxCurVerFlNm=max(assPubFlHisLst)
+    			maxCurVerNum=maxCurVerFlNm[-6:-3]
+    			fileVer='{:0>3d}'.format(int(maxCurVerNum)+1)
+    			pmc.sysFile(AssetFileName,ren=AssetHisPath+getFileNm+'_v'+fileVer+'.mb')
+    			print 'Current file move to: '+AssetHisPath+getFileNm+'_v'+fileVer+'.mb'
+    pmc.saveAs(AssetFileName)
+    print 'File published as: '+AssetFileName
+
+def svAnFile(): 
+	#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  
 ######## UI ########
 
 def tvcChkWrkUI():
@@ -432,7 +493,14 @@ def tvcChkWrkUI():
     pmc.button('mdLyChk',w=70,l='Check',c='mdUnusdChk()')
     pmc.button(w=70,l='Delete All',c='mdUnusdClean();mdUnusdChk()')
     pmc.button(w=70,l='Select Fails',c='mdUnusdSL()')
-        
+    ##  texture check
+    pmc.rowLayout('txChkRwLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'center'], [3, 'center'], [4, 'center'], [5, 'center']],en=1,cw=[[1, 120], [3, 80], [4, 80], [5, 80], [2, 210]],nc=5)
+    pmc.text('txChkTx',en=1,w=120,al='right',l='Check textures:')
+    pmc.textField('txChkTx',en=1,w=200,tx='UnChecked',ed=0,vis=1,w=200)
+    pmc.button('txChkGochkBtn',w=70,l='Check',c='txImgChk()')
+    pmc.button('txChkAutFxBtn',w=70,l='Detail',c='txImgDtBtn(lanSw)',en=1)
+    pmc.button('txChkSlFBtn',w=70,l='Select Fails',c='txImgSlBtn()')
+
     pmc.separator(st='in',w=600,p='mdChkClmLyt')
     ##  md batch chk all
     pmc.rowLayout('mdChkAllRwLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'center'], [3, 'center'], [4, 'center'], [5, 'center']],en=1,cw=[[1, 120], [3, 80], [4, 80], [5, 80], [2, 210]],nc=4)
