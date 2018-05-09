@@ -223,15 +223,15 @@ def anMasterCamLsting():
         i+=1
 #####ios
 def anCamChgCmd():
-	if (pmc.optionMenu('anMasterCamLst',q=1,sl=1))==1:
-		pmc.button('anRnmCamBtn',e=1,en=0)
-		pmc.button('anLckCamBtn',e=1,en=0)
-		pmc.button('anMasterCamBtn3',e=1,en=0)
+    if (pmc.optionMenu('anMasterCamLst',q=1,sl=1))==1:
+        pmc.button('anRnmCamBtn',e=1,en=0)
+        pmc.button('anLckCamBtn',e=1,en=0)
+        pmc.button('anMasterCamBtn3',e=1,en=0)
     
-	else:
-		pmc.button('anRnmCamBtn',e=1,en=1)
-		pmc.button('anLckCamBtn',e=1,en=1)
-		pmc.button('anMasterCamBtn3',e=1,en=1)
+    else:
+        pmc.button('anRnmCamBtn',e=1,en=1)
+        pmc.button('anLckCamBtn',e=1,en=1)
+        pmc.button('anMasterCamBtn3',e=1,en=1)
     
 ###%%ios
 def anMasterCamRename():
@@ -326,8 +326,8 @@ def txImgChk():
     print '========== Texture Images Check ==========\n'
     for item in txImgLst:
         if os.path.exists(pmc.getAttr(item+'.fileTextureName'))==0:
-				print pmc.getAttr(item+'.fileTextureName')+' is missing.'
-				dirtTxImgLst.append(item)
+                print pmc.getAttr(item+'.fileTextureName')+' is missing.'
+                dirtTxImgLst.append(item)
     if len(dirtTxImgLst)>0:
         pmc.textField('txChkTxF',e=1,tx=str(len(dirtTxImgLst))+' missing textures.',bgc=(1,0,0))
         pmc.textField('anTxChkTxF',e=1,tx=str(len(dirtTxImgLst))+' missing textures.',bgc=(1,0,0))
@@ -349,10 +349,10 @@ def txImgSlBtn():
     pmc.select(getDiirtTxImgLst)
     
 def txPathResetBtn():
-	getTxSlLs=pmc.textScrollList('txLst',q=1,si=1)
-	for item in getTxSlLs:
-		nodeNm=item.split('    ')[1]
-		txPath=item.split('    ')[2]
+    getTxSlLs=pmc.textScrollList('txLst',q=1,si=1)
+    for item in getTxSlLs:
+        nodeNm=item.split('    ')[1]
+        txPath=item.split('    ')[2]
     
 def getPrjLst(tvcRoot):
 
@@ -426,11 +426,11 @@ def svAssFile():
     getAssSlId=pmc.optionMenu('assTypLs',q=1,sl=1)
     getAssTypData=pmc.menuItem(assLst[getAssSlId -1],q=1,da=1)
     if getAssTypData==0:
-    	asItmTyp='characters'
+        asItmTyp='characters'
     if getAssTypData==1:
-    	asItmTyp='props'
+        asItmTyp='props'
     if getAssTypData==2:
-    	asItmTyp='sets'
+        asItmTyp='sets'
 
     getFileTyp=pmc.optionMenu ('asSvFlType',q=1,v=1)
     getFileNm=pmc.textField('asflNm',q=1,tx=1)
@@ -438,23 +438,70 @@ def svAssFile():
     AssetFileName=tvcRoot +getPrjNm+'/VFX/assets/models'+asItmTyp+'/'+getAssNm+'/'+getFileTyp+'/'+getFileNm+'.mb'
     AssetHisPath=tvcRoot +getPrjNm+'/VFX/assets/models'+asItmTyp+'/'+getAssNm+'/'+getFileTyp+'/pubHistory/'
     if os.path.exists(AssetFileName):
-    	if os.path.exists(AssetHisPath)==0:
-    		os.mkdir(AssetHisPath)
-    		pmc.sysFile(AssetFileName,ren=AssetHisPath+getFileNm+'_v001'+'.mb')
-    	else:
-    		assPubFlHisLst=pmc.getFileList(folder=AssetHisPath,fs=getFileNm+'_v???.mb')
-    		if len(list(assPubFlHisLst))>0:
-    			maxCurVerFlNm=max(assPubFlHisLst)
-    			maxCurVerNum=maxCurVerFlNm[-6:-3]
-    			fileVer='{:0>3d}'.format(int(maxCurVerNum)+1)
-    			pmc.sysFile(AssetFileName,ren=AssetHisPath+getFileNm+'_v'+fileVer+'.mb')
-    			print 'Current file move to: '+AssetHisPath+getFileNm+'_v'+fileVer+'.mb'
+        if os.path.exists(AssetHisPath)==0:
+            os.mkdir(AssetHisPath)
+            pmc.sysFile(AssetFileName,ren=AssetHisPath+getFileNm+'_v001'+'.mb')
+        else:
+            assPubFlHisLst=pmc.getFileList(folder=AssetHisPath,fs=getFileNm+'_v???.mb')
+            if len(list(assPubFlHisLst))>0:
+                maxCurVerFlNm=max(assPubFlHisLst)
+                maxCurVerNum=maxCurVerFlNm[-6:-3]
+                fileVer='{:0>3d}'.format(int(maxCurVerNum)+1)
+                pmc.sysFile(AssetFileName,ren=AssetHisPath+getFileNm+'_v'+fileVer+'.mb')
+                print 'Current file move to: '+AssetHisPath+getFileNm+'_v'+fileVer+'.mb'
     pmc.saveAs(AssetFileName)
     print 'File published as: '+AssetFileName
 
 def svAnFile(): 
-	pass
-	#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  
+    getPrjNm=pmc.optionMenu('anPrjLst',q=1,v=1)
+    getScNm=pmc.optionMenu('anScLst',q=1,v=1)
+    getShNm=pmc.optionMenu('anShLst',q=1,v=1)
+    getFileTyp=pmc.optionMenu('addAssType',q=1,v=1)
+    getFileNm=pmc.optionMenu('anflNm',q=1,tx=1)
+    pubPath=tvcRoot+getPrjNm+'/VFX/sequences/'+getScNm+'/'+getShNm+'/CG/scenes/'+getFileTyp+'/publish/'
+    shFileName=pubPath+getFileNm+'.mb'
+    shHisPath=pubPath+'/pubHistory/'
+
+    if os.path.exists(pubPath)==0:
+        os.mkdir(pubPath)
+    if os.path.exists(shFileName):
+        if os.path.exists(shHisPath)==0:
+            os.mkdir(shHisPath)
+            pmc.sysFile(shiFileName,ren=shHisPath+getFileNm+'_v???.mb')
+            if len(list(shPubFlHisLst))>0:
+                maxCurVerFlNm=max(shPubFlHisLst)
+                maxCurVerNum=maxCurVerFlNm[-6:-3]
+                fileVer='{:0>3d}'.format(int(maxCurVerNum)+1)    
+                pmc.sysFile(shFileName,ren=shHisPath+getFileNm+'_v'+fileVer+'.mb')
+                print 'Existed file moved to: '+shHisPath+getFileNm+'_v'+fileVer+'.mb'
+    pmc.saveAs(shFileName)
+    print 'Shot File published as: '+shFileName
+    
+def chAssFlNm():
+    getAssNm=pmc.optionMenu('assTypLs',q=1,v=1)
+    getAssTyp=pmc.optionMenu('addAssType',q=1,ill=1)
+    if getAssTyp=='Mesh':
+        pmc.textField('asFlNm',e=1,tx=getAss+'_md_'+usr,en=1)
+    if getAssTyp=='Rig':
+        pmc.textField('asFlNm',e=1,tx=getAss+'_rg_'+usr,en=1)
+    if getAssTyp=='Lighting':
+        pmc.textField('asFlNm',e=1,tx=getAss+'_lt_'+usr,en=1)
+
+def chAnFlNm():
+    getShName=pmc.optionMenu('anShLst',q=1,v=1)
+    getTskLs=pmc.optionMenu('addAssType',q=1,ill=1)
+    getTskSlId=pmc.optionMenu('addAssType',q=1,sl=1)
+    getTskTypId=pmc.optionMenu(getTskLs[getTskSlId-1],q=1,da=1)
+
+    if getTskTypId==0:
+        getTskTyp='an'
+    if getTskTypId==1:
+        getTskTyp='fx'
+    if getTskTypId==2:
+        getTskTyp='lt'  
+    pmc.textField('anflNm',e=1,tx=getShName+'_'+getTskTyp+'_'+usr,en=1)
+
+    #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  
 ######## UI ########
 
 def tvcChkWrkUI():
