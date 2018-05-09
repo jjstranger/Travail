@@ -1,44 +1,31 @@
-#def anUnusdSl():
-#####ios
-def txImgChk():
-    txImgLst=pmc.ls(typ=‘file’)
-    dirtTxImgLst=[]
-    print ‘========== Texture Images Check ==========\n’
-    for item in txImgLst:
-        if os.path.exists(pmc.getAttr(item+‘.fileTextureName’))==0:
-        print pmc.getAttr(item+‘.fileTextureName’)+‘ is missing.’
-        dirtTxImgLst.append(item)
-    if len(dirtTxImgLst)>0:
-        pmc.textField(‘txChkTxF’,e=1,tx=str(len(dirtTxImgLst))+‘ missing textures.’,bgc=(1,0,0))
-        pmc.textField(‘anTxChkTxF’,e=1,tx=str(len(dirtTxImgLst))+‘ missing textures.’,bgc=(1,0,0))
-    else:
-        pmc.textField(‘txChkTxF’,e=1,tx=‘Good’,bgc=(0,1,0))
-        pmc.textField(‘anTxChkTxF’,e=1,tx=‘Good’,bgc=(0,1,0))
-        return dirtTxImgLst
-        
-def txDCC():
-    getTxNodNm=pmc.textScrollList(‘txLst’,q=1,sl=1)[0].split(“    ”)
-    pmc.select(getTxNodNm[1])
-    pmc.runtime.AttributeEditor()
 
-def txImgDtBtn(lanSW):
-    pmc.runtime.FilePathEditor()
-    
-def txImgSlBtn():
-    getDiirtTxImgLst=txImgChk()
-    pmc.select(getDiirtTxImgLst)
-    
-def txPathResetBtn():
-    getTxSlLs=pmc.textScrollList(“txLst”,q=1,si=1)
-for item in getTxSlLs:
-    nodeNm=item.split(“    ”)[1]
-    txPath=item.split(“    ”)[2]
-    
-    
-#####ios
-
-#def getShtLst():
     
 def svAssFile():
     getPrjNm=pmc.optionMenu(‘prjLst’,q=1,v=1)
-assLst=
+    assLst=
+
+
+#
+def chAssFlNm():
+    getAssNm=pmc.optionMenu(“assTypLs”,q=1,v=1)
+    getAssTyp=pmc.optionMenu(”addAssType”,q=1,ill=1)
+    if getAssTyp==“Mesh”:
+        pmc.textField(“asFlNm”,e=1,tx=getAss+”_md_”+usr,en=1)
+    if getAssTyp==“Rig”:
+        pmc.textField(“asFlNm”,e=1,tx=getAss+”_rg_”+usr,en=1)
+    if getAssTyp==“Lighting”:
+        pmc.textField(“asFlNm”,e=1,tx=getAss+”_lt_”+usr,en=1)
+
+def chAnFlNm():
+    getShName=pmc.optionMenu(‘anShLst’,q=1,v=1)
+    getTskLs=pmc.optionMenu(‘addAssType’,q=1,ill=1)
+    getTskSlId=pmc.optionMenu(‘addAssTyp’,q=1,sl=1)
+    getTskTypId=pmc.optionMenu(getTskLs[getTskSlId-1],q=1,da=1)
+
+    if getTskTypId==0:
+        getTskTyp=‘an’
+    if getTskTypId==1:
+        getTskTyp=‘fx’
+    if getTskTypId==2:
+        getTskTyp=‘lt’
+    pmc.textField(‘anflNm’,e=1,tx=getShName+’_’+getTskTyp+’_’+usr,en=1)
