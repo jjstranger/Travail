@@ -556,7 +556,9 @@ def tvcChkWrkUI():
     pmc.separator()
     pmc.button('mdChkAllGoChkAllBtn',w=70,l='Check All',c='mdHistoryChk();mdNmRptChk();mdUfrzChk();mdUnusdChk();txImgChk();print"========== Check Finished =========="')
     pmc.button('mdChkAllAutFxAllBtn',w=70,l='Auto Fix All',c='mdHstryFxBtn();mdHistoryChk();msUfrzFxBtn();mdUfrzChk();mdUnusdClean();mdUnusdChk();txImgDtBtn()')
-    ##### Asset Publish ########
+    ##### Asset Publish #####
+    AssNm='XXX'#
+
     pmc.rowLayout('mdSbTT',p='mdChkClmLyt',nc=2)
     pmc.textField('SbTit',en=1,w=100,tx='    Asset Publish',ed=0,bgc=(.5,.5,.5),p='mdSbTT')
     pmc.separator(st='out',w=600,p='mdSbTT')
@@ -570,10 +572,10 @@ def tvcChkWrkUI():
     
     pmc.rowLayout('mdAssChsRWLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'center']],en=1,cw=[[1, 120],[2, 210]],nc=2)
     pmc.text('assLst',l="Asset: ",w=120)
-    pmc.optionMenu ('assTypLs',p='mdAssChsRWLyt')
+    pmc.optionMenu ('assTypLs',p='mdAssChsRWLyt'，cc= 'chAssFlNm')#
 
-
-    pmc.rowLayout('mdAdAssRWLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3, 'center'], [4, 'center'], [5, 'center']],en=1,cw=[[1, 35],[2, 84],[3, 100],[4, 100],[5, 100]],nc=5)
+'''
+pmc.rowLayout('mdAdAssRWLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3, 'center'], [4, 'center'], [5, 'center']],en=1,cw=[[1, 35],[2, 84],[3, 100],[4, 100],[5, 100]],nc=5)
     pmc.separator()
     pmc.checkBox('addAssChkBx',en=0,v=0,l='Add an asset',p='mdAdAssRWLyt',w=80,onc='pmc.optionMenu ("addAssType",e=1,en=1);pmc.textField("assNm",e=1,en=1);pmc.button("annAssBtn",e=1,en=1);pmc.optionMenu ("assTypLs",e=1,en=0)',ofc='pmc.optionMenu("addAssType",e=1,en=0);pmc.textField("assNm",e=1,en=0);pmc.button("annAssBtn",e=1,en=0);pmc.optionMenu ("assTypLs",e=1,en=1)')
     
@@ -583,16 +585,16 @@ def tvcChkWrkUI():
     pmc.menuItem(l="sets")
     pmc.textField('assNm',pht="Give a asset name here.",w=200,p='mdAdAssRWLyt')
     pmc.button('annAssBtn',l="Add",c="goAddAssetFolders($tvcRoot)",w=100,p='mdAdAssRWLyt',en=0)
-    
+'''
     pmc.rowLayout('mdSvFlLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3, 'center'], [4, 'center'], [5, 'center']],en=1,cw=[[1, 35],[2, 84],[3, 100],[4, 100],[5, 100]],nc=5)
     pmc.separator()
     pmc.text('svFlChkBx',l='Save File',p='mdSvFlLyt',w=80)
     
-    pmc.optionMenu ('asSvFlType',p='mdSvFlLyt',w=90)
+    pmc.optionMenu ('asSvFlType',p='mdSvFlLyt',cc='chAssFlNm()',w=90)
     pmc.menuItem (l="Mesh",en=1)
     pmc.menuItem (l="Rig",en=1)
     pmc.menuItem (l="Lighting",en=1)
-    pmc.textField('asflNm',pht="Give a File name here.",tx='XXX_md.mb',w=200,p='mdSvFlLyt')
+    pmc.textField('asflNm',pht=" Select a Asset.",w=200,p='mdSvFlLyt')
     pmc.button('annAssBtn',l="Save",c="svAssFile()",w=100,p='mdSvFlLyt')
 
     #pmc.rowLayout ('addAssBtLyt',numberOfColumns=2,p='mdChkClmLyt')
@@ -671,12 +673,12 @@ def tvcChkWrkUI():
     pmc.separator()
     pmc.text('ansvFlChkBx',l='Save File',p='anSvFlLyt',w=80)
     
-    pmc.optionMenu ('addAssType',p='anSvFlLyt',w=90)
-    pmc.menuItem (l="Animation",en=1)
-    pmc.menuItem (l="Effect",en=1)
-    pmc.menuItem (l="Lighting",en=1)
-    pmc.textField('anflNm',pht="Give a File name here.",tx='XXX_SH_001_001_an_xxx_v001.mb',w=200,p='anSvFlLyt')
-    pmc.button('anFlSvBtn',l="Save",c="",w=100,p='anSvFlLyt')
+    pmc.optionMenu ('addAssType',p='anSvFlLyt',w=90,cc='chAnGlNm')
+    pmc.menuItem (l="Animation",en=1,da=0,p= 'addAssTyp')
+    pmc.menuItem (l="Effect",en=1,da=1,p= 'addAssTyp')
+    pmc.menuItem (l="Lighting",en=1,da=2,p= 'addAssTyp')
+    pmc.textField('anflNm',pht="Choose a Shot.",w=200,p='anSvFlLyt')
+    pmc.button('anFlSvBtn',l="Save",c="svAnFile()",w=100,p='anSvFlLyt')
 
     #pmc.rowLayout ('addAssBtLyt',numberOfColumns=2,p='mdChkClmLyt')
     #pmc.separator (w=330,st="none",p='addAssBtLyt')
