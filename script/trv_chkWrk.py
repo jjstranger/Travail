@@ -7,9 +7,9 @@
 
 import pymel.core as pmc
 import os
-#from travailGlobalSettings import *
+from travailGlobalSettings import *
 from collections import Counter  
-tvcRoot = "D:/prjTst/"
+prjRoot = "D:/prjTst/"#temp
 
 
 def mdHistoryChk():
@@ -354,9 +354,9 @@ def txPathResetBtn():
         nodeNm=item.split('    ')[1]
         txPath=item.split('    ')[2]
     
-def getPrjLst(tvcRoot):
+def getPrjLst(prjRoot):
 
-    prjList=pmc.getFileList(folder=tvcRoot,fs="3???_*")
+    prjList=pmc.getFileList(folder=prjRoot,fs="3???_*")
     
     if "3000_PN_JobName" in prjList:
         prjList.remove("3000_PN_JobName")
@@ -371,9 +371,9 @@ def getAssetLst():
     if assMenuItms:
         pmc.deleteUI(assMenuItms)
     getPrjNm=pmc.optionMenu ('prjLst',q=1,v=1)
-    assPathCH=tvcRoot+getPrjNm+'/VFX/assets/models/characters/'
-    assPathPR=tvcRoot+getPrjNm+'/VFX/assets/models/props/'
-    assPathST=tvcRoot+getPrjNm+'/VFX/assets/models/sets/'
+    assPathCH=prjRoot+getPrjNm+'/VFX/assets/models/characters/'
+    assPathPR=prjRoot+getPrjNm+'/VFX/assets/models/props/'
+    assPathST=prjRoot+getPrjNm+'/VFX/assets/models/sets/'
 
     assChLst=os.listdir(assPathCH)
     assPrLst=os.listdir(assPathPR)
@@ -399,7 +399,7 @@ def getScLst():
     if scMenuItms:
         pmc.deleteUI(scMenuItms)
     getPrjNm=pmc.optionMenu ('anPrjLst',q=1,v=1)
-    scPath=tvcRoot+getPrjNm+'/VFX/sequences/'
+    scPath=prjRoot+getPrjNm+'/VFX/sequences/'
     scLst=os.listdir(scPath)
     scLst.sort()
     pmc.menuItem (l="None",p='anScLst')
@@ -412,7 +412,7 @@ def getShLst():
         pmc.deleteUI(shMenuItms)
     getPrjNm=pmc.optionMenu ('anPrjLst',q=1,v=1)
     getScNm=pmc.optionMenu ('anScLst',q=1,v=1)
-    shPath=tvcRoot+getPrjNm+'/VFX/sequences/'+getScNm+'/'
+    shPath=prjRoot+getPrjNm+'/VFX/sequences/'+getScNm+'/'
     shLst=os.listdir(shPath)
     shLst.sort()
     pmc.menuItem (l="None",p='anShLst')
@@ -433,10 +433,10 @@ def svAssFile():
         asItmTyp='sets'
 
     getFileTyp=pmc.optionMenu ('asSvFlType',q=1,v=1)
-    getFileNm=pmc.textField('asflNm',q=1,tx=1)
-    #pmc.saveAs(tvcRoot+getPrjNm+'/VFX/assets/models/'+asItmTyp+'/'+getFileTyp+'/'+getFileNm) 
-    AssetFileName=tvcRoot +getPrjNm+'/VFX/assets/models'+asItmTyp+'/'+getAssNm+'/'+getFileTyp+'/'+getFileNm+'.mb'
-    AssetHisPath=tvcRoot +getPrjNm+'/VFX/assets/models'+asItmTyp+'/'+getAssNm+'/'+getFileTyp+'/pubHistory/'
+    getFileNm=pmc.textField('asFlNm',q=1,tx=1)
+    #pmc.saveAs(prjRoot+getPrjNm+'/VFX/assets/models/'+asItmTyp+'/'+getFileTyp+'/'+getFileNm) 
+    AssetFileName=prjRoot +getPrjNm+'/VFX/assets/models'+asItmTyp+'/'+getAssNm+'/'+getFileTyp+'/'+getFileNm+'.mb'
+    AssetHisPath=prjRoot +getPrjNm+'/VFX/assets/models'+asItmTyp+'/'+getAssNm+'/'+getFileTyp+'/pubHistory/'
     if os.path.exists(AssetFileName):
         if os.path.exists(AssetHisPath)==0:
             os.mkdir(AssetHisPath)
@@ -458,7 +458,7 @@ def svAnFile():
     getShNm=pmc.optionMenu('anShLst',q=1,v=1)
     getFileTyp=pmc.optionMenu('addAssType',q=1,v=1)
     getFileNm=pmc.optionMenu('anflNm',q=1,tx=1)
-    pubPath=tvcRoot+getPrjNm+'/VFX/sequences/'+getScNm+'/'+getShNm+'/CG/scenes/'+getFileTyp+'/publish/'
+    pubPath=prjRoot+getPrjNm+'/VFX/sequences/'+getScNm+'/'+getShNm+'/CG/scenes/'+getFileTyp+'/publish/'
     shFileName=pubPath+getFileNm+'.mb'
     shHisPath=pubPath+'/pubHistory/'
 
@@ -479,32 +479,32 @@ def svAnFile():
     
 def chAssFlNm():
     getAssNm=pmc.optionMenu('assTypLs',q=1,v=1)
-    getAssTyp=pmc.optionMenu('addAssType',q=1,ill=1)
+    getAssTyp=pmc.optionMenu('asSvFlType',q=1,v=1)
     if getAssTyp=='Mesh':
-        pmc.textField('asFlNm',e=1,tx=getAss+'_md_'+usr,en=1)
+        pmc.textField('asFlNm',e=1,tx=getAssNm+'_md_'+usrShort,en=1)
     if getAssTyp=='Rig':
-        pmc.textField('asFlNm',e=1,tx=getAss+'_rg_'+usr,en=1)
+        pmc.textField('asFlNm',e=1,tx=getAssNm+'_rg_'+usrShort,en=1)
     if getAssTyp=='Lighting':
-        pmc.textField('asFlNm',e=1,tx=getAss+'_lt_'+usr,en=1)
+        pmc.textField('asFlNm',e=1,tx=getAssNm+'_lt_'+usrShort,en=1)
 
 def chAnFlNm():
     getShName=pmc.optionMenu('anShLst',q=1,v=1)
     getTskLs=pmc.optionMenu('addAssType',q=1,ill=1)
     getTskSlId=pmc.optionMenu('addAssType',q=1,sl=1)
-    getTskTypId=pmc.optionMenu(getTskLs[getTskSlId-1],q=1,da=1)
-
+    getTskTypId=pmc.menuItem(getTskLs[getTskSlId-1],q=1,da=1)
+    #print 'getTskLs:'+
     if getTskTypId==0:
         getTskTyp='an'
     if getTskTypId==1:
         getTskTyp='fx'
     if getTskTypId==2:
         getTskTyp='lt'  
-    pmc.textField('anflNm',e=1,tx=getShName+'_'+getTskTyp+'_'+usr,en=1)
+    pmc.textField('anflNm',e=1,tx=getShName+'_'+getTskTyp+'_'+usrShort,en=1)
 
     #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  
 ######## UI ########
 
-def tvcChkWrkUI():
+def trvChkWrkUI():
     if(pmc.window('TVC_SubChk',q=1,ex=1)):
         pmc.deleteUI('TVC_SubChk')
     pmc.window('TVC_SubChk',s=0,t='TVC Check Work',h=430,w=600,tb=1,mb=1)
@@ -558,7 +558,6 @@ def tvcChkWrkUI():
     pmc.button('mdChkAllAutFxAllBtn',w=70,l='Auto Fix All',c='mdHstryFxBtn();mdHistoryChk();msUfrzFxBtn();mdUfrzChk();mdUnusdClean();mdUnusdChk();txImgDtBtn()')
     ##### Asset Publish #####
     AssNm='XXX'#
-
     pmc.rowLayout('mdSbTT',p='mdChkClmLyt',nc=2)
     pmc.textField('SbTit',en=1,w=100,tx='    Asset Publish',ed=0,bgc=(.5,.5,.5),p='mdSbTT')
     pmc.separator(st='out',w=600,p='mdSbTT')
@@ -567,25 +566,23 @@ def tvcChkWrkUI():
     pmc.text('prjChsTx',l="Project: ",w=120)
     pmc.optionMenu ('prjLst',p='mdPrjChsRWLyt',cc='getAssetLst()')
     pmc.menuItem (l="Please Select...")
-    for item in getPrjLst(tvcRoot):
+    for item in getPrjLst(prjRoot):
         pmc.menuItem (l=item)
-    
     pmc.rowLayout('mdAssChsRWLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'center']],en=1,cw=[[1, 120],[2, 210]],nc=2)
     pmc.text('assLst',l="Asset: ",w=120)
-    pmc.optionMenu ('assTypLs',p='mdAssChsRWLyt'，cc= 'chAssFlNm')#
-
-'''
-pmc.rowLayout('mdAdAssRWLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3, 'center'], [4, 'center'], [5, 'center']],en=1,cw=[[1, 35],[2, 84],[3, 100],[4, 100],[5, 100]],nc=5)
+    pmc.optionMenu ('assTypLs',p='mdAssChsRWLyt',cc='chAssFlNm()')#
+    '''
+    pmc.rowLayout('mdAdAssRWLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3, 'center'], [4, 'center'], [5, 'center']],en=1,cw=[[1, 35],[2, 84],[3, 100],[4, 100],[5, 100]],nc=5)
     pmc.separator()
     pmc.checkBox('addAssChkBx',en=0,v=0,l='Add an asset',p='mdAdAssRWLyt',w=80,onc='pmc.optionMenu ("addAssType",e=1,en=1);pmc.textField("assNm",e=1,en=1);pmc.button("annAssBtn",e=1,en=1);pmc.optionMenu ("assTypLs",e=1,en=0)',ofc='pmc.optionMenu("addAssType",e=1,en=0);pmc.textField("assNm",e=1,en=0);pmc.button("annAssBtn",e=1,en=0);pmc.optionMenu ("assTypLs",e=1,en=1)')
-    
+
     pmc.optionMenu('addAssType',p='mdAdAssRWLyt',w=90,en=0)
     pmc.menuItem(l="characters")
     pmc.menuItem(l="props")
     pmc.menuItem(l="sets")
     pmc.textField('assNm',pht="Give a asset name here.",w=200,p='mdAdAssRWLyt')
-    pmc.button('annAssBtn',l="Add",c="goAddAssetFolders($tvcRoot)",w=100,p='mdAdAssRWLyt',en=0)
-'''
+    pmc.button('annAssBtn',l="Add",c="goAddAssetFolders($prjRoot)",w=100,p='mdAdAssRWLyt',en=0)
+    '''
     pmc.rowLayout('mdSvFlLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3, 'center'], [4, 'center'], [5, 'center']],en=1,cw=[[1, 35],[2, 84],[3, 100],[4, 100],[5, 100]],nc=5)
     pmc.separator()
     pmc.text('svFlChkBx',l='Save File',p='mdSvFlLyt',w=80)
@@ -594,13 +591,13 @@ pmc.rowLayout('mdAdAssRWLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3
     pmc.menuItem (l="Mesh",en=1)
     pmc.menuItem (l="Rig",en=1)
     pmc.menuItem (l="Lighting",en=1)
-    pmc.textField('asflNm',pht=" Select a Asset.",w=200,p='mdSvFlLyt')
+    pmc.textField('asFlNm',pht=" Select a Asset.",w=200,p='mdSvFlLyt')
     pmc.button('annAssBtn',l="Save",c="svAssFile()",w=100,p='mdSvFlLyt')
 
     #pmc.rowLayout ('addAssBtLyt',numberOfColumns=2,p='mdChkClmLyt')
     #pmc.separator (w=330,st="none",p='addAssBtLyt')
 
-    #pmc.button('addAss',l="Add it",rs=1,w=100,c="goAddAssetFolders($tvcRoot)",p='addAssBtLyt')
+    #pmc.button('addAss',l="Add it",rs=1,w=100,c="goAddAssetFolders($prjRoot)",p='addAssBtLyt')
     #####  An Chk
 
     pmc.columnLayout('anChkClmLyt',p='tvcChkTabLyt',en=1,rs=10,h=150,w=600)
@@ -648,7 +645,7 @@ pmc.rowLayout('mdAdAssRWLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3
     pmc.text('anPrjChsTx',l="Project: ",w=120)
     pmc.optionMenu ('anPrjLst',p='anPrjChsRWLyt',cc='getScLst()')
     pmc.menuItem (l="Please Select...")
-    for item in getPrjLst(tvcRoot):
+    for item in getPrjLst(prjRoot):
         pmc.menuItem (l=item)
 
     pmc.rowLayout('anScShLyt',p='anChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3, 'right'], [4, 'center']],en=1,cw=[[1, 120],[2, 80],[3, 50],[4, 80]],nc=4)
@@ -673,19 +670,19 @@ pmc.rowLayout('mdAdAssRWLyt',p='mdChkClmLyt',cal=[[1, 'right'], [2, 'right'], [3
     pmc.separator()
     pmc.text('ansvFlChkBx',l='Save File',p='anSvFlLyt',w=80)
     
-    pmc.optionMenu ('addAssType',p='anSvFlLyt',w=90,cc='chAnGlNm')
-    pmc.menuItem (l="Animation",en=1,da=0,p= 'addAssTyp')
-    pmc.menuItem (l="Effect",en=1,da=1,p= 'addAssTyp')
-    pmc.menuItem (l="Lighting",en=1,da=2,p= 'addAssTyp')
+    pmc.optionMenu ('addAssType',p='anSvFlLyt',w=90,cc='chAnFlNm()')
+    pmc.menuItem (l="Animation",en=1,da=0,p='addAssType')
+    pmc.menuItem (l="Effect",en=1,da=1,p='addAssType')
+    pmc.menuItem (l="Lighting",en=1,da=2,p= 'addAssType')
     pmc.textField('anflNm',pht="Choose a Shot.",w=200,p='anSvFlLyt')
     pmc.button('anFlSvBtn',l="Save",c="svAnFile()",w=100,p='anSvFlLyt')
 
     #pmc.rowLayout ('addAssBtLyt',numberOfColumns=2,p='mdChkClmLyt')
     #pmc.separator (w=330,st="none",p='addAssBtLyt')
 
-    #pmc.button('addAss',l="Add it",rs=1,w=100,c="goAddAssetFolders($tvcRoot)",p='addAssBtLyt')
+    #pmc.button('addAss',l="Add it",rs=1,w=100,c="goAddAssetFolders($prjRoot)",p='addAssBtLyt')
     
     pmc.tabLayout('tvcChkTabLyt',e=1,tli=[[1, 'Asset'], [2, 'Shot']])
     pmc.showWindow('TVC_SubChk')
 
-tvcChkWrkUI()
+trvChkWrkUI()
