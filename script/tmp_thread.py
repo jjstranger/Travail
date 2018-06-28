@@ -10,6 +10,12 @@ def statusFieldBtn(col):
         bTxL=‘BAD’
         bBCol=(.95,.25,.25)
     
+    ‘’’
+    step=3
+    text=‘ ‘*8+’GOOD TEXT’+’ ‘*8
+    textL=text[step%len(text):(step+8)%len(text)]
+    bBCol=(math.sin(i/9.2)/4+.5,math.sin(i/9.8+8.7)/5.2+.5,math.cos(i/8.8)/4.2+.5)
+    
     getStatusLinePar=pmc.iconTextButton(‘statusFieldButton’,q=1,p=1)
     if pmc.button(‘notiBtn’,ex=1):
         pmc.deleteUI(‘notiBtn’)
