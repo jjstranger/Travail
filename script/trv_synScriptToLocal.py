@@ -17,12 +17,12 @@ def trv_synScrpt2Loc():
 			dstFileTCod=os.stat(usrScrptDir+item).st_mtime
 			if srcFileTCod!=dstFileTCod:
 				if os.path.exists(usrScrptDir+item+'c'):
-					pycDel.append(item)
+					pycDel.append(travailRoot+'/Script/'+item+'c')
 					print '[Delete] '+usrScrptDir+item+'c'
 				print '[Update] '+item
-				scrptToCopy.append(item)
+				scrptToCopy.append(travailRoot+'/Script/'+item)
 		else:
 			print '[New] '+item
-			scrptToCopy.append(item)
+			scrptToCopy.append(travailRoot+'/Script/'+item)
 	return scrptToCopy,pycDel
-#trv_synScrpt2Loc()
+trv_synScrpt2Loc()
