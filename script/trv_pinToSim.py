@@ -21,26 +21,49 @@ def trv_pin2Sim():
 trv_pon2Sim()
 
 
-#Follicle below 
-sel=pmc.selected(fl=1)
-geoName=pmc.ls(sel[-1].split('.')[0])
-sumVec=[0,0,0]
-for item in sel:
-    getPPos=item.getPosition(space='world')
-    sumVec+=pmc.datatypes.Vector(getPPos)
-avrPPos=sumVec/len(sel)
-dist=100000
-for item in sel:
-    getPDis=item.getPosition(space='world').distanceTo(avrPPos)
-    if getPDis<dist:
-        dist=getPDis
-        pMin=item.getPosion(space='world')
-        pUV=item.getUV()
-curLocFollic=pmc.createNode('follicle',n='locFollicShape')
-curLocFollicTsfm=pmc.listRelatives(curLocFollic,p=1)
-geoName[0].worldMatrix >>curLocFollic.inputWorldMatrix
-geoName[0].outMesh >>curLocFollic.inputMesh
-curLocFollic.parameterU.set(pUV[0])
-curLocFollic.parameterV.set(pUV[1])
-curLocFollic.outTranslate >> curLocFollicTsfm[0].translate
-curLocFollic.outRotate >> curLocFollicTsfm[0].rotate
+### Vertexs Selected
+
+def componentsSelected():
+	#Follicle below 
+	sel=pmc.selected(fl=1)
+	geoName=pmc.ls(sel[-1].split('.')[0])
+	#curUVSetName=pmc.polyUVSet(geoName[0],q=1,cuv=1)
+	
+	sumVec=[0,0,0]
+	for item in sel:
+	    getPPos=item.getPosition(space='world')
+	    sumVec+=pmc.datatypes.Vector(getPPos)
+	avrPPos=sumVec/len(sel)
+	dist=100000
+	for item in sel:
+	    getPDis=item.getPosition(space='world').distanceTo(avrPPos)
+	    if getPDis<dist:
+	        dist=getPDis
+	        nearestPoint=item
+	pMin=nearestPoint.getPosition(space='world')
+	pUV=[nearestPoint.getUVs()[0][0],nearestPoint.getUVs()[1][1]]
+	#pUV=nearestPoint.getUV()#uvSet='map1')#not work before maya 2018
+	curLocFollic=pmc.createNode('follicle',n='locFollicShape')
+	curLocFollicTsfm=pmc.listRelatives(curLocFollic,p=1)
+	geoName[0].worldMatrix >>curLocFollic.inputWorldMatrix
+	geoName[0].outMesh >>curLocFollic.inputMesh
+	curLocFollic.parameterU.set(pUV[0])
+	curLocFollic.parameterV.set(pUV[1])
+	curLocFollic.outTranslate >> curLocFollicTsfm[0].translate
+	curLocFollic.outRotate >> curLocFollicTsfm[0].rotate
+	return curLocFollicTsfm
+
+#selection detec
+if isinstance(pmc.selected()[0],(pmc.nodetypes.Transform,pmc.nodetypes.Shape)):
+	try:
+		len(pmc.selected())=1
+	except:
+		pmc.error('Only one object can be selected.')
+	else:
+		pass
+elif isinstance(pmc.selected()[0],(pmc.MeshVertex)):
+	componentsSelected()
+
+elif isinstance(pmc.selected()[0],(pmc.MeshEdge, pmc.MeshFace)):
+	pmc.select(pmc.polyListComponentConversion(pmc.selected(),tv=1))
+	componentsSelected()
