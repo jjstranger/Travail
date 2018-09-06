@@ -1,22 +1,28 @@
 from pymel import core as pmc
 
 def trv_pin2Sim():
+    slState=selectionDetect()
     pinSel=pmc.selected()
     if (pmc.pluginInfo('matrixNodes',q=1,l=1)==0:
         pmc.loadPlugin('matrixNodes')
     dcmpMtrx=pmc.createNode('decomposeMatrix')
-
-    inverseTransLoc=pmc.spaceLocator(n='InverseTransLoc')
+    multScl=pmc.createNode('multiplyDivide')
+    multScl.operation.set(1)
+    
+    inverseTransLoc=createRootCurve()
     pinSel[0].worldInverseMatrix >>dcmpMtrx.inputMattix
-    dcmpMtrx.outputTranslate >> inverseTransLoc.translate
+    if slState=='GEO':
+        pinSel[0].scale >> multScl.input1
+    elif slState=='CPN':
+        multScl.input.set([1,1,1])
+    dcmpMtrx.outputTranslate >> multScl.input2
+    multScl.output >> invertTransLoc.translate
     dcmpMtrx.outputRotate >> inverseTransLoc.rotate
-    dcmoMtrx.outputScale >> inverseTransLoc.scale
     pmc.refresh(su=1)
-    pmc.bakeSimulation(inverseTransLoc,sm=1,t=(pmc.playbackOptions(q=1,min=1), pmc.playbackOptions(q=1,max=1)),sb=1,at=['tx','ty','tz','rx','ry','rz'])
+    pmc.bakeResults(inverseTransLoc,sm=1,t=(pmc.playbackOptions(q=1,min=1), pmc.playbackOptions(q=1,max=1)),sb=1,at=['tx','ty','tz','rx','ry','rz'])
     pmc.refresh(su=0)
-    dcmpMtrx.outputTranslate // inverseTransLoc.translate
+    multScl.output // inverseTransLoc.translate
     dcmpMtrx.outputRotate // inverseTransLoc.rotate
-    dcmoMtrx.outputScale // inverseTransLoc.scale
 
 trv_pon2Sim()
 
@@ -54,16 +60,25 @@ def componentsSelected():
 	return curLocFollicTsfm
 
 #selection detec
-if isinstance(pmc.selected()[0],(pmc.nodetypes.Transform,pmc.nodetypes.Shape)):
-	try:
-		len(pmc.selected())=1
-	except:
-		pmc.error('Only one object can be selected.')
-	else:
-		pass
-elif isinstance(pmc.selected()[0],(pmc.MeshVertex)):
-	componentsSelected()
+def selectionDetect():
+    if isinstance(pmc.selected()[0],(pmc.nodetypes.Transform,pmc.nodetypes.Shape)):
+	    try:
+		    len(pmc.selected())=1
+            return 'GEO'
+	    except:
+		    pmc.error('Only one object can be selected.')
+	    else:
+		    pass
+    elif isinstance(pmc.selected()[0],(pmc.MeshVertex)):
+	    componentsSelected()
 
-elif isinstance(pmc.selected()[0],(pmc.MeshEdge, pmc.MeshFace)):
-	pmc.select(pmc.polyListComponentConversion(pmc.selected(),tv=1))
-	componentsSelected()
+    elif isinstance(pmc.selected()[0],(pmc.MeshEdge, pmc.MeshFace)):
+	    pmc.select(pmc.polyListComponentConversion(pmc.selected(),tv=1))
+	    componentsSelected()
+        return 'CPN'
+    else:
+        pmc.error('wrong type selection.')
+
+def createRootCurve():
+    invertRootCurve=pmc.curve(n='invertTransRoot',d=1,p=[...])
+    return invertRootCurve
