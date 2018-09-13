@@ -1,0 +1,29 @@
+global proc string[] trv_meshHolder()
+{
+	if (`pluginInfo -q -l "matrixNodes"`==0)
+	{
+		loadPlugin "matrixNodes";
+	}
+	string $sel[]=`ls -sl`;
+	string $allMeshHolderLs[]={};
+	for ($item in $sel)
+	{
+		string $crMHTsf=`createNode transform -n "MeshHolder"`;
+		string $crMHSh=`createNode mesh -n ($crMHTsf+"Shape") -p $crMHTsf`;
+		string $dcMtx=`createNode decomposeMatrix`;
+		connectAttr -f ($item+".worldMatrix") ($dcMtx+".inputMatrix");
+		connectAttr -f ($dcMtx+".outputTranslate") ($crMHTsf+".translate");
+		connectAttr -f ($dcMtx+".outputScale") ($crMHTsf+".scale");
+		connectAttr -f ($dcMtx+".outputRotate") ($crMHTsf+".rotate");
+		string $getShape[]=`listRelatives -s $item`;
+		connectAttr -f ($getShape[0]+".outMesh") ($crMHSh+".inMesh");
+		string $getShdr[]=`listConnections -t "shadingEngine" -d 1 $getShape[0]`;
+		connectAttr -na ($crMHSh+".instObjGroups.objectGroups[0]") ($getShdr[0]+".dagSetMembers");
+		setAttr ($crMHTsf+".visibility") 0;
+		stringArrayInsertAtIndex(0,$allMeshHolderLs,$item);
+	}
+	return $allMeshHolderLs;
+}
+
+string $getMHnm[]=trv_meshHolder();
+print $getMHnm;
