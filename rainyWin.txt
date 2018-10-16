@@ -1,0 +1,15 @@
+pPlane: 24,12
+ptc1:
+//creation:
+goalU=rand(0,1.0);
+goalV=rand(1.0);
+lifespanPP=rand(1.6,2.3);
+rate=rand(.68,1.22);
+//dynamic:
+goalU-=0.01*rate;
+if (goalU>.999 ||goalU<.001 ||goalV>.999 || goalV<.001)
+{lifespanPP=0;}
+goalV+=(noise(time*158.33+particleId)/300)-0.0017*rate;
+
+ptc2:
+lifespanPP=rand(1.5,2.3)

@@ -1,0 +1,61 @@
+global proc pprFldUI(){
+if (`window -ex "pprFldWin"`)
+{deleteUI -wnd "pprFldWin";}
+
+window -wh 400 500 -s 0 -t "Paper Folding Tool" pprFldWin;
+columnLayout -w 400 -h 500 mainClmnLyt;
+string $trLs=`formLayout -p mainClmnLyt`;
+treeView -p $trLs -abr 0 FldStpsTrLs;
+formLayout -e -w 400 -h 300  -af "FldStpsTrLs" "top" 2  -af "FldStpsTrLs" "left" 5  -af "FldStpsTrLs" "buttom" 2  -af "FldStpsTrLs" "right" 5 $trLs;
+// Oparations
+rowLayout -nc 3 -p mainClmnLyt -h 30 OpBtnRwLyt;
+separator -st "none" -w 150 -p OpBtnRwLyt;
+button -l "+ Add Fold" -p OpBtnRwLyt -w 100 -c "" addFldOpBtn;
+button -l "- Remove Fold" -p OpBtnRwLyt -w 100 -c "" rmFldOpBtn;
+separator -st "in" -w 400 -h 5 -p mainClmnLyt;
+// Attributes
+frameLayout -w 400 -l "Attributes" -p mainClmnLyt attrFrmLyt;
+rowLayout -w 400 -nc 2 -p attrFrmLyt enRwLyt;
+separator -st "none" -p enRwLyt -w 140;
+checkBox -l "Enable" -p enRwLyt enablCb;
+floatSliderGrp -l "Curvature : " -f 1 -ss 1 -p attrFrmLyt cvAttr;
+rowLayout -nc 6 -p attrFrmLyt lbBtnRwLyt;
+floatFieldGrp -l "L-Bend : " -p lbBtnRwLyt lbAttr;
+button -l "-180" -c "" -w 30 -p lbBtnLyt l-180Btn;
+button -l "-90" -c "" -w 30 -p lbBtnLyt l-90Btn;
+button -l "0" -c "" -w 25 -p lbBtnLyt l0Btn;
+button -l "90" -c "" -w 30 -p lbBtnLyt l90Btn;
+button -l "180" -c "" -w 30 -p lbBtnLyt l180Btn;
+rowLayout -nc 6 -p attrFrmLyt rbBtnLyt;
+floatFieldGrp -l "R-Bend: " -p rbBtnRwLyt rbAttr;
+button -l "-180" -c "" -w 30 -p rbBtnLyt r-180Btn;
+button -l "-90" -c "" -w 30 -p rbBtnLyt r-90Btn;
+button -l "0" -c "" -w 25 -p rbBtnLyt r0Btn;
+button -l "90" -c "" -w 30 -p rbBtnLyt r90Btn;
+button -l "180" -c "" -w 30 -p rbBtnLyt r180Btn;
+showWindow pprFldWin;
+}
+pprFldUI();
+
+/////////////
+
+string $sel[]=`ls -sl`;
+if (`size($sel)!=1`)
+{error "";}
+
+float$bbxLs[]=`xform -q -bb $sel[0]`;
+vector $bbxLen=<<abs($bbxLs[3]-$bbxLs[0]),abs($bbxLs[4]-$bbxLs[1]),abs($bbxLs[5]-$bbxLs[2])>>;
+float $minDm;
+if ($bbxLen.x<=$bbxLen.y)
+{$minDm=$bbxLen.x;}
+else if ($bbxLen.z<$minDm)
+{$minDm=$bbxLen.z;}
+else
+{$minDm=$bbxLen.y;}
+
+string $addFld[]=`nonLinear -t bend -lowBound -1 -highBound 0 -curvature 180`;
+
+string $BndHdl=`rename $addFld[1] "Fold"`;
+duplicate $BndHdl;
+listConnections -d 1 -t "nonlinear" Fold1;
+sets -in bend1Set1 pPlane1;
