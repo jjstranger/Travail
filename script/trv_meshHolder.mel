@@ -27,3 +27,4 @@ global proc string[] trv_meshHolder()
 
 string $getMHnm[]=trv_meshHolder();
 print $getMHnm;
+#并非
