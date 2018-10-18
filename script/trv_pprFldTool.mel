@@ -96,6 +96,7 @@ global proc int clickTvItmCmd(string $str,int $onoff)
         string $getTvSel=$str;
         if (objExists($getTvSel))
         {
+            select $getTvSel;
             string $getShp[]=`listConnections -t "nonLinear" $getTvSel`;
             if (size($getShp)>0)
             {
@@ -176,6 +177,7 @@ global proc addPprFld()
         addAttr -at double -ln "rbend" $addFld[0];
     }
     parent $BndHdl $fldDfmsGrp;
+    expression -s ("float $cvrVal="+$addFld[0]+".curvature;\nif (-1<$curVal<0)\n{$cvrVal=-1;}\nelse if (0<=$cvrVal<1)\n{$cvrVal=1;}\n"+$addFld[0]+".lowBound=-abs(180/$curVal*"+$addFld[0]+".lbend/180);\n"+$addFld[0]+".highBound=abs(180/$curVal*"+$addFld[0]+".rbend/180);\n\n") -n ($addFld[0]+"_"+$BndHdl+"_pprFldExp");
     if ( `treeView -q -iex $sel[0] FldStpsTrLs`==0)
         {
             treeView -e -ai $sel[0] "" FldStpsTrLs;
@@ -192,6 +194,7 @@ global proc pprFldUI()
 
     window -wh 400 500 -s 0 -t "Paper Folding Tool" pprFldWin;
     columnLayout -w 400 -h 500 mainClmnLyt;
+    text -l "  Fold lists:" -h 20 flTx;
     string $trLs=`formLayout -p mainClmnLyt`;
     treeView -p $trLs -abr 0 -sc "clickTvItmCmd" FldStpsTrLs;
     formLayout -e -w 400 -h 300  
