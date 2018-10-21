@@ -1,14 +1,16 @@
+
 global proc pprFld_readFldStrucFrmScn()
 {
     string $sel[]=`ls "*_PprFoldDefmsGrp*"`;
     string $fldsLs[];
+    treeView -e -ra FldStpsTrLs;
     if (size($sel)>0)
     {
         for ($dfmGrp in $sel)
         {
             string $cl[];
             tokenize $dfmGrp "_" $cl;
-            print $cl;
+            //print $cl;
             string $getGeoNm;
             if (size($cl)>2)
             {
@@ -25,7 +27,6 @@ global proc pprFld_readFldStrucFrmScn()
             {
                 $getGeoNm=$cl[0];
             }
-            print (size($cl));
             if (objExists($getGeoNm))
             {     
                 string $getFldLs[]=`listRelatives -c $dfmGrp`;
@@ -61,6 +62,7 @@ global proc pprFld_AddTvItm(string $getGeo,string $getFldLsArry[])
     {
         treeView -e -ai $item $getGeo FldStpsTrLs;
     }
+    //pprFld_readFldStrucFrmScn();
 }
 
 global proc crtAttrClmnLyt(string $str)
@@ -71,12 +73,14 @@ global proc crtAttrClmnLyt(string $str)
     checkBox -l "Enable" -p enRwLyt enablCb;
     attrFieldSliderGrp -l "Curvature : " -at ($str+".curvature") -p attrCtntClmnLyt cvAttr;
     rowLayout -nc 4 -p attrCtntClmnLyt lbBtnRwLyt;
-    attrFieldSliderGrp -l "L-Bend : " -at ($str+".lbend") -p lbBtnRwLyt lbAttr;
+    attrFieldSliderGrp -l "L-Bend : " -at ($str+".lbend") -min -180 -max 0 -p lbBtnRwLyt -w 310 lbAttr;
+    //floatSliderGrp -l "L-Bend : " -f 1 -p lbBtnRwLyt -w 310 lbAttr;
     button -l "-180" -c ("setAttr \""+$str+".lbend\" -180;") -w 25 -p lbBtnRwLyt "l-180Btn";
     button -l "-90" -c ("setAttr \""+$str+".lbend\" -90;") -w 25 -p lbBtnRwLyt "l-90Btn";
     button -l "0" -c ("setAttr \""+$str+".lbend\" 0;") -w 25 -p lbBtnRwLyt "l0Btn";
     rowLayout -nc 4 -p attrCtntClmnLyt rbBtnRwLyt;
-    attrFieldSliderGrp -l "R-Bend : " -at ($str+".rbend") -p rbBtnRwLyt rbAttr;
+    attrFieldSliderGrp -l "R-Bend : " -at ($str+".rbend") -min 0 -max 180 -p rbBtnRwLyt -w 310 rbAttr;
+    //floatSliderGrp -l "R-Bend : " -f 1 -p rbBtnRwLyt -w 310 rbAttr;
     button -l "0" -c ("setAttr \""+$str+".rbend\" 0;") -w 25 -p rbBtnRwLyt "r0Btn";
     button -l "90" -c ("setAttr \""+$str+".rbend\" 90;") -w 25 -p rbBtnRwLyt "r90Btn";
     button -l "180" -c ("setAttr \""+$str+".rbend\" 180;") -w 25 -p rbBtnRwLyt "r180Btn";
@@ -91,17 +95,20 @@ global proc delAttrClmnLyt()
 
 global proc int clickTvItmCmd(string $str,int $onoff)
 {
+    
+    print ($onoff+"\n");
     if ($onoff)
     {
         string $getTvSel=$str;
         if (objExists($getTvSel))
         {
-            select $getTvSel;
+            //pprFld_readFldStrucFrmScn();
             string $getShp[]=`listConnections -t "nonLinear" $getTvSel`;
             if (size($getShp)>0)
             {
                 if (`objectType -isa "nonLinear" $getShp[0]`)
                 {
+                    delAttrClmnLyt();
                     crtAttrClmnLyt($getShp[0]);
                     frameLayout -e -l ($getTvSel+" - Attributes") attrFrmLyt;
                     connectControl enablCb ($getShp[0]+".envelope");
@@ -114,12 +121,18 @@ global proc int clickTvItmCmd(string $str,int $onoff)
             }
             else
                 {delAttrClmnLyt();}
+            treeView -e -cs FldStpsTrLs;
+            //treeView -e -si FoldHandle_1 1 FldStpsTrLs;
+            treeView -e -si $getTvSel 1 FldStpsTrLs;
+            select $getTvSel;
+            print ($getTvSel+"\n");
         }
         else
             {delAttrClmnLyt();}
     } 
     else
         {delAttrClmnLyt();}
+//treeView -e -cs FldStpsTrLs;
 return 1;
 }
 
@@ -157,7 +170,8 @@ global proc addPprFld()
             $NrmAxs="Y";
         }
 
-    string $addFld[]=`nonLinear -typ bend -lowBound -1 -highBound 0 -curvature 180  $sel[0]`;
+    string $addFld[]=`nonLinear -typ bend -lowBound -1 -highBound 0 -curvature 360  $sel[0]`;
+    //print $addFld;
     if ($NrmAxs=="Y")
         {
             setAttr ($addFld[1]+".rotateZ") 90;
@@ -167,7 +181,8 @@ global proc addPprFld()
             setAttr ($addFld[1]+".rotateY") 90;
         }
 
-    string $BndHdl=`rename $addFld[1] "Fold"`;
+    string $BndHdl=`rename $addFld[1] FoldHandle_1`;
+
     if (attributeExists("lbend",$addFld[0])==0)
     {
         addAttr -at double -ln "lbend" $addFld[0];
@@ -177,15 +192,27 @@ global proc addPprFld()
         addAttr -at double -ln "rbend" $addFld[0];
     }
     parent $BndHdl $fldDfmsGrp;
-    expression -s ("float $cvrVal="+$addFld[0]+".curvature;\nif (-1<$curVal<0)\n{$cvrVal=-1;}\nelse if (0<=$cvrVal<1)\n{$cvrVal=1;}\n"+$addFld[0]+".lowBound=-abs(180/$curVal*"+$addFld[0]+".lbend/180);\n"+$addFld[0]+".highBound=abs(180/$curVal*"+$addFld[0]+".rbend/180);\n\n") -n ($addFld[0]+"_"+$BndHdl+"_pprFldExp");
+    //print $BndHdl;
+    expression -s ("float $curVal="+$addFld[0]+".curvature;\nif (-1<$curVal<0)\n{$curVal=-1;}\nelse if (0<=$curVal<1)\n{$curVal=1;}\n"+$addFld[0]+".lowBound=-abs(180/$curVal*"+$addFld[0]+".lbend/180);\n"+$addFld[0]+".highBound=abs(180/$curVal*"+$addFld[0]+".rbend/180);\n\n") -n ($addFld[0]+"_"+$BndHdl+"_pprFldExp");
+    setAttr ($addFld[0]+".lbend") -180;
     if ( `treeView -q -iex $sel[0] FldStpsTrLs`==0)
         {
             treeView -e -ai $sel[0] "" FldStpsTrLs;
         }
     treeView -e -ai $BndHdl $sel[0] FldStpsTrLs;
+    pprFld_readFldStrucFrmScn();
 }
 //addPprFld();
-
+global proc rmPprFld()
+{
+    string $getSlObj[]=`ls -sl`;
+    string $getTvLsSl[]=`treeView -q -si FldStpsTrLs`;
+    if ($getTvLsSl[0] == $getSlObj[0])
+    {
+        delete $getSlObj[0];
+        treeView -e -ri $getTvLsSl[0] FldStpsTrLs;
+    }
+}
 
 global proc pprFldUI()
 {
@@ -206,7 +233,7 @@ global proc pprFldUI()
     rowLayout -nc 3 -p mainClmnLyt -h 30 OpBtnRwLyt;
     separator -st "none" -w 150 -p OpBtnRwLyt;
     button -l "+ Add Fold" -p OpBtnRwLyt -w 100 -c "addPprFld()" addFldOpBtn;
-    button -l "- Remove Fold" -p OpBtnRwLyt -w 100 -c "" rmFldOpBtn;
+    button -l "- Remove Fold" -p OpBtnRwLyt -w 100 -c "rmPprFld()" rmFldOpBtn;
     separator -st "in" -w 400 -h 5 -p mainClmnLyt;
     // Attributes
     frameLayout -w 400 -l "Select Folder to see Attributes." -p mainClmnLyt attrFrmLyt;
@@ -216,22 +243,6 @@ global proc pprFldUI()
 pprFldUI();
 /////////////
 /*
-string $sel[]=`ls -sl`;
-if (`size($sel)!=1`)
-{error "";}
-
-float$bbxLs[]=`xform -q -bb $sel[0]`;
-vector $bbxLen=<<abs($bbxLs[3]-$bbxLs[0]),abs($bbxLs[4]-$bbxLs[1]),abs($bbxLs[5]-$bbxLs[2])>>;
-float $minDm;
-if ($bbxLen.x<=$bbxLen.y)
-{$minDm=$bbxLen.x;}
-else if ($bbxLen.z<$minDm)
-{$minDm=$bbxLen.z;}
-else
-{$minDm=$bbxLen.y;}
-
-string $addFld[]=`nonLinear -t bend -lowBound -1 -highBound 0 -curvature 180`;
-
 string $BndHdl=`rename $addFld[1] "Fold"`;
 duplicate $BndHdl;
 listConnections -d 1 -t "nonlinear" Fold1;
