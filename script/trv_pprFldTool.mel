@@ -96,13 +96,14 @@ global proc delAttrClmnLyt()
 global proc int clickTvItmCmd(string $str,int $onoff)
 {
     
-    print ($onoff+"\n");
+    //print ($onoff+"\n");
     if ($onoff)
     {
         string $getTvSel=$str;
         if (objExists($getTvSel))
         {
-            //pprFld_readFldStrucFrmScn();
+            select $getTvSel;
+            pprFld_readFldStrucFrmScn();
             string $getShp[]=`listConnections -t "nonLinear" $getTvSel`;
             if (size($getShp)>0)
             {
@@ -121,10 +122,10 @@ global proc int clickTvItmCmd(string $str,int $onoff)
             }
             else
                 {delAttrClmnLyt();}
-            treeView -e -cs FldStpsTrLs;
+            //treeView -e -cs FldStpsTrLs;
             //treeView -e -si FoldHandle_1 1 FldStpsTrLs;
             treeView -e -si $getTvSel 1 FldStpsTrLs;
-            select $getTvSel;
+           
             print ($getTvSel+"\n");
         }
         else
@@ -133,7 +134,7 @@ global proc int clickTvItmCmd(string $str,int $onoff)
     else
         {delAttrClmnLyt();}
 //treeView -e -cs FldStpsTrLs;
-return 1;
+return 0;
 }
 
 
