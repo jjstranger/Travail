@@ -1,16 +1,21 @@
+////////////////////////////////
+//  Paper Fold Tool ver 1.0   //
+//      by : JJ.Stranger      //
+//      at : 2018-10-23       //
+////////////////////////////////
 
-global proc pprFld_readFldStrucFrmScn()
+global proc trv_pprFldTl_readFldStcFrmScn()
 {
     string $sel[]=`ls "*_PprFoldDefmsGrp*"`;
     string $fldsLs[];
-    treeView -e -ra FldStpsTrLs;
+    treeView -e -ra pprFldStpsTvLs;
+    trv_pprFldTl_delAttrClmnLyt();
     if (size($sel)>0)
     {
         for ($dfmGrp in $sel)
         {
             string $cl[];
             tokenize $dfmGrp "_" $cl;
-            //print $cl;
             string $getGeoNm;
             if (size($cl)>2)
             {
@@ -38,34 +43,31 @@ global proc pprFld_readFldStrucFrmScn()
                         if (`objectType -isa "deformBend" $elm`)
                         {
                             stringArrayInsertAtIndex(100, $fldsLs,$item);
-                            //print $fldsLs;
                         }
                     }
                 }
-                pprFld_AddTvItm($getGeoNm,$fldsLs);
+                trv_pprFldTl_AddTvItm($getGeoNm,$fldsLs);
             }
         }
     }
 }
 
     
-global proc pprFld_AddTvItm(string $getGeo,string $getFldLsArry[])
+global proc trv_pprFldTl_AddTvItm(string $getGeo,string $getFldLsArry[])
 {
-    //string $getGeo=$str;
-    //string $getFldLsArry[];
-    if ( `treeView -q -iex $getGeo FldStpsTrLs`==1)
-    {
-        treeView -e -ri $getGeo FldStpsTrLs;
-    }
-    treeView -e -ai $getGeo "" FldStpsTrLs;
+    if ( `treeView -q -iex $getGeo pprFldStpsTvLs`==1)
+        {treeView -e -ri $getGeo pprFldStpsTvLs;}
+    treeView -e -ai $getGeo "" pprFldStpsTvLs;
     for ($item in $getFldLsArry)
-    {
-        treeView -e -ai $item $getGeo FldStpsTrLs;
-    }
-    //pprFld_readFldStrucFrmScn();
+        {treeView -e -ai $item $getGeo pprFldStpsTvLs;}
 }
-
-global proc crtAttrClmnLyt(string $str)
+global proc trv_pprFldTl_crtMshAttrClmnLyt(string $str)
+{
+    columnLayout -w 400 -p attrFrmLyt attrCtntClmnLyt;
+    attrFieldSliderGrp -l "Division Levels : " -at ($str+".divisions") -p attrCtntClmnLyt dlAttr;
+    attrFieldSliderGrp -l "Continuity : " -at ($str+".continuity") -p attrCtntClmnLyt ctntAttr;
+}
+global proc trv_pprFldTl_crtFldAttrClmnLyt(string $str)
 {
     columnLayout -w 400 -p attrFrmLyt attrCtntClmnLyt;
     rowLayout -w 400 -nc 2 -p attrCtntClmnLyt enRwLyt;
@@ -74,81 +76,81 @@ global proc crtAttrClmnLyt(string $str)
     attrFieldSliderGrp -l "Curvature : " -at ($str+".curvature") -p attrCtntClmnLyt cvAttr;
     rowLayout -nc 4 -p attrCtntClmnLyt lbBtnRwLyt;
     attrFieldSliderGrp -l "L-Bend : " -at ($str+".lbend") -min -180 -max 0 -p lbBtnRwLyt -w 310 lbAttr;
-    //floatSliderGrp -l "L-Bend : " -f 1 -p lbBtnRwLyt -w 310 lbAttr;
     button -l "-180" -c ("setAttr \""+$str+".lbend\" -180;") -w 25 -p lbBtnRwLyt "l-180Btn";
     button -l "-90" -c ("setAttr \""+$str+".lbend\" -90;") -w 25 -p lbBtnRwLyt "l-90Btn";
     button -l "0" -c ("setAttr \""+$str+".lbend\" 0;") -w 25 -p lbBtnRwLyt "l0Btn";
     rowLayout -nc 4 -p attrCtntClmnLyt rbBtnRwLyt;
     attrFieldSliderGrp -l "R-Bend : " -at ($str+".rbend") -min 0 -max 180 -p rbBtnRwLyt -w 310 rbAttr;
-    //floatSliderGrp -l "R-Bend : " -f 1 -p rbBtnRwLyt -w 310 rbAttr;
     button -l "0" -c ("setAttr \""+$str+".rbend\" 0;") -w 25 -p rbBtnRwLyt "r0Btn";
     button -l "90" -c ("setAttr \""+$str+".rbend\" 90;") -w 25 -p rbBtnRwLyt "r90Btn";
     button -l "180" -c ("setAttr \""+$str+".rbend\" 180;") -w 25 -p rbBtnRwLyt "r180Btn";
 }
 
-global proc delAttrClmnLyt()
+global proc trv_pprFldTl_delAttrClmnLyt()
 {
     frameLayout -e -l "Select A Fold to see Attributes" attrFrmLyt;
     if (`columnLayout -q -ex attrCtntClmnLyt`)
         {deleteUI -lay attrCtntClmnLyt;}
 }
 
-global proc int clickTvItmCmd(string $str,int $onoff)
+global proc int trv_pprFldTl_clkTvItmCmd(string $str,int $onoff)
 {
-    
-    //print ($onoff+"\n");
     if ($onoff)
     {
         string $getTvSel=$str;
+        trv_pprFldTl_readFldStcFrmScn();
         if (objExists($getTvSel))
         {
             select $getTvSel;
-            pprFld_readFldStrucFrmScn();
-            string $getShp[]=`listConnections -t "nonLinear" $getTvSel`;
-            if (size($getShp)>0)
+            string $getShp[]=`listRelatives -s $getTvSel`;
+            string $getGeoSmth[];
+            for ($item in $getShp)
             {
-                if (`objectType -isa "nonLinear" $getShp[0]`)
-                {
-                    delAttrClmnLyt();
-                    crtAttrClmnLyt($getShp[0]);
-                    frameLayout -e -l ($getTvSel+" - Attributes") attrFrmLyt;
-                    connectControl enablCb ($getShp[0]+".envelope");
-                    //connectControl cvAttr ($getShp[0]+".curvature");
-                    //connectControl -in 2 lbAttr ($getShp[0]+".lbend");
-                    //connectControl -in 2 rbAttr ($getShp[0]+".rbend");
-                }
-                else
-                    {delAttrClmnLyt();}
+                $getGeoSmth=`listConnections -t "polySmoothFace" $item`;
+                if (size($getGeoSmth)>0)
+                    {break;}
+            }
+            string $getDfmr[]=`listConnections -t "nonLinear" $getTvSel`;
+            if (size($getDfmr)>0)
+            {
+                trv_pprFldTl_delAttrClmnLyt();
+                trv_pprFldTl_crtFldAttrClmnLyt($getDfmr[0]);
+                frameLayout -e -l ($getTvSel+" - Attributes") attrFrmLyt;
+                connectControl enablCb ($getDfmr[0]+".envelope");
+            }
+            else if (size($getGeoSmth)>0)
+            {
+                trv_pprFldTl_delAttrClmnLyt();
+                trv_pprFldTl_crtMshAttrClmnLyt($getGeoSmth[0]);
+                frameLayout -e -l ($getTvSel+" - "+$getGeoSmth[0]+" - Attributes") attrFrmLyt;
             }
             else
-                {delAttrClmnLyt();}
-            //treeView -e -cs FldStpsTrLs;
-            //treeView -e -si FoldHandle_1 1 FldStpsTrLs;
-            treeView -e -si $getTvSel 1 FldStpsTrLs;
-           
-            print ($getTvSel+"\n");
+                {trv_pprFldTl_delAttrClmnLyt();}
+            treeView -e -si $getTvSel 1 pprFldStpsTvLs;
         }
         else
-            {delAttrClmnLyt();}
+        {trv_pprFldTl_delAttrClmnLyt();}
     } 
     else
-        {delAttrClmnLyt();}
-//treeView -e -cs FldStpsTrLs;
+    {trv_pprFldTl_delAttrClmnLyt();}
 return 0;
 }
 
-
-global proc addPprFld()
+global proc trv_pprFldTl_addFldBtnCmd()
 {
     string $sel[]=`ls -sl`;
     if (size($sel)==0)
-        {error "Empty Selection.";}
+        {$sel=`polyPlane -w 10 -h 10 -sw 50 -sh 50`;}
     else if (size($sel)>1)
         {error "Multiple Selection.";}
+    int $facTot[]=`polyEvaluate -f $sel[0]`;
+    if ($facTot[0]< 2500)
+    {
+        polySmooth -dv 0 $sel[0];
+    }
     string $fldDfmsGrp=$sel[0]+"_PprFoldDefmsGrp";
     if (objExists($fldDfmsGrp)==0)
     {
-        
         createNode transform -n $fldDfmsGrp;
     }
     float $bbxLs[]=`xform -q -bb $sel[0]`;
@@ -170,9 +172,7 @@ global proc addPprFld()
             $minDm=$bbxLen.y;
             $NrmAxs="Y";
         }
-
     string $addFld[]=`nonLinear -typ bend -lowBound -1 -highBound 0 -curvature 360  $sel[0]`;
-    //print $addFld;
     if ($NrmAxs=="Y")
         {
             setAttr ($addFld[1]+".rotateZ") 90;
@@ -182,7 +182,7 @@ global proc addPprFld()
             setAttr ($addFld[1]+".rotateY") 90;
         }
 
-    string $BndHdl=`rename $addFld[1] FoldHandle_1`;
+    string $BndHdl=`rename $addFld[1] ("FoldHandle_"+$sel[0]+"_1")`;
 
     if (attributeExists("lbend",$addFld[0])==0)
     {
@@ -193,58 +193,76 @@ global proc addPprFld()
         addAttr -at double -ln "rbend" $addFld[0];
     }
     parent $BndHdl $fldDfmsGrp;
-    //print $BndHdl;
     expression -s ("float $curVal="+$addFld[0]+".curvature;\nif (-1<$curVal<0)\n{$curVal=-1;}\nelse if (0<=$curVal<1)\n{$curVal=1;}\n"+$addFld[0]+".lowBound=-abs(180/$curVal*"+$addFld[0]+".lbend/180);\n"+$addFld[0]+".highBound=abs(180/$curVal*"+$addFld[0]+".rbend/180);\n\n") -n ($addFld[0]+"_"+$BndHdl+"_pprFldExp");
     setAttr ($addFld[0]+".lbend") -180;
-    if ( `treeView -q -iex $sel[0] FldStpsTrLs`==0)
+    if ( `treeView -q -iex $sel[0] pprFldStpsTvLs`==0)
         {
-            treeView -e -ai $sel[0] "" FldStpsTrLs;
+            treeView -e -ai $sel[0] "" pprFldStpsTvLs;
         }
-    treeView -e -ai $BndHdl $sel[0] FldStpsTrLs;
-    pprFld_readFldStrucFrmScn();
+    treeView -e -ai $BndHdl $sel[0] pprFldStpsTvLs;
+    trv_pprFldTl_readFldStcFrmScn();
 }
-//addPprFld();
-global proc rmPprFld()
+
+global proc trv_pprFldTl_rmvFldBtnCmd()
 {
     string $getSlObj[]=`ls -sl`;
-    string $getTvLsSl[]=`treeView -q -si FldStpsTrLs`;
+    string $getTvLsSl[]=`treeView -q -si pprFldStpsTvLs`;
     if ($getTvLsSl[0] == $getSlObj[0])
     {
         delete $getSlObj[0];
-        treeView -e -ri $getTvLsSl[0] FldStpsTrLs;
+        treeView -e -ri $getTvLsSl[0] pprFldStpsTvLs;
     }
 }
 
-global proc pprFldUI()
+global proc trv_pprFldTl_dupFldBtnCmd()
+{
+    string $getTvSlIt[]=`treeView -q -si pprFldStpsTvLs`;
+    string $dfmGeoNm=`treeView -q -ip $getTvSlIt[0] pprFldStpsTvLs`;
+    if (size($dfmGeoNm)>0)  
+    {
+        string $getGeoShp[]=`listRelatives -s $dfmGeoNm`;
+        if (`objectType -isa "mesh" $getGeoShp[0]`)
+        {
+            string $getSlBdHdl[]=`ls -sl`;
+            string $getHdlShp[]=`listRelatives -s $getSlBdHdl[0]`;
+            if (`objectType -isa "deformBend" $getHdlShp[0]`)
+            {
+                string $dpcLs[]=`duplicate $getSlBdHdl[0]`;
+                sets -in $dpcLs[2] $dfmGeoNm;
+                trv_pprFldTl_readFldStcFrmScn();
+            }
+        }
+    }
+}
+
+global proc trv_pprFldTl_edtTvLabCmd(string $itmNm,string $newNm)
+{
+    rename $itmNm $newNm;
+}
+global proc trv_pprFldTl_UI()
 {
     if (`window -ex "pprFldWin"`)
         {deleteUI -wnd "pprFldWin";}
-
     window -wh 400 500 -s 0 -t "Paper Folding Tool" pprFldWin;
-    columnLayout -w 400 -h 500 mainClmnLyt;
+    columnLayout -w 400 -h 500 pprFldTlWin_mainClmnLyt;
     text -l "  Fold lists:" -h 20 flTx;
-    string $trLs=`formLayout -p mainClmnLyt`;
-    treeView -p $trLs -abr 0 -sc "clickTvItmCmd" FldStpsTrLs;
+    string $trLs=`formLayout -p pprFldTlWin_mainClmnLyt`;
+    treeView -p $trLs -abr 0 -sc "trv_pprFldTl_clkTvItmCmd" -elc "trv_pprFldTl_edtTvLabCmd" pprFldStpsTvLs;
     formLayout -e -w 400 -h 300  
-        -af "FldStpsTrLs" "top" 2  
-        -af "FldStpsTrLs" "left" 5  
-        -af "FldStpsTrLs" "bottom" 2  
-        -af "FldStpsTrLs" "right" 5 $trLs;
+        -af "pprFldStpsTvLs" "top" 2  
+        -af "pprFldStpsTvLs" "left" 5  
+        -af "pprFldStpsTvLs" "bottom" 2  
+        -af "pprFldStpsTvLs" "right" 5 $trLs;
     // Oparations
-    rowLayout -nc 3 -p mainClmnLyt -h 30 OpBtnRwLyt;
-    separator -st "none" -w 150 -p OpBtnRwLyt;
-    button -l "+ Add Fold" -p OpBtnRwLyt -w 100 -c "addPprFld()" addFldOpBtn;
-    button -l "- Remove Fold" -p OpBtnRwLyt -w 100 -c "rmPprFld()" rmFldOpBtn;
-    separator -st "in" -w 400 -h 5 -p mainClmnLyt;
+    rowLayout -nc 4 -p pprFldTlWin_mainClmnLyt -h 30 OpBtnRwLyt;
+    separator -st "none" -w 80 -p OpBtnRwLyt;
+    button -l "+ Add Fold" -p OpBtnRwLyt -w 100 -c "trv_pprFldTl_addFldBtnCmd()" addFldOpBtn;
+    button -l "% Duplicate Fold" -p OpBtnRwLyt -w 100 -c "trv_pprFldTl_dupFldBtnCmd()" mrrFldOpBtn;
+    button -l "- Remove Fold" -p OpBtnRwLyt -w 100 -c "trv_pprFldTl_rmvFldBtnCmd()" rmFldOpBtn;
+    separator -st "in" -w 400 -h 5 -p pprFldTlWin_mainClmnLyt;
     // Attributes
-    frameLayout -w 400 -l "Select Folder to see Attributes." -p mainClmnLyt attrFrmLyt;
-    pprFld_readFldStrucFrmScn();
+    frameLayout -w 400 -l "Select Folder to see Attributes." -p pprFldTlWin_mainClmnLyt attrFrmLyt;
+    trv_pprFldTl_readFldStcFrmScn();
     showWindow pprFldWin;
 }
-pprFldUI();
-/////////////
-/*
-string $BndHdl=`rename $addFld[1] "Fold"`;
-duplicate $BndHdl;
-listConnections -d 1 -t "nonlinear" Fold1;
-sets -in bend1Set1 pPlane1;
+trv_pprFldTl_UI();
