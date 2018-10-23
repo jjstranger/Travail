@@ -1,2 +1,0 @@
-string $createMeshHolderTransform =`createNode transform -n "MeshHolder"`;
-string $createMeshHolderShape=`createNode mesh -n ($createMeshHolderTransform+"Shape") -p $createMeshHolderTransform`;
