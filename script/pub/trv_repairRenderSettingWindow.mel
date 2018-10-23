@@ -1,0 +1,7 @@
+ global proc rpRndStWin()
+ {
+	deleteUI unifiedRenderGlobalsWindow; 
+	buildNewSceneUI; 
+
+ }
+ 
