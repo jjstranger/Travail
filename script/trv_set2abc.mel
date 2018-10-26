@@ -1,65 +1,74 @@
-//20180418
+//	==================================================
+//	trv_setsToAbc ver 1.0
+//	by : JJ.Stranger
+//	at : 2018-04-18
+//	==================================================
+//	description: export the objects grouped 
+//		by set to Alembic Cache.
+//	==================================================
 
 global proc goCacheCmd()
 {
-if (`pluginInfo -q -l "AbcExport" ==0`)
-{loadPlugin "AbcExport";}
-string $getSel[]=`textScrollList -q -si lstCSTsl`;
-print $getSel;
-select $getSel;
-AlembicExportSelection;
+    if (`pluginInfo -q -l "AbcExport"` ==0)
+        {loadPlugin "AbcExport";}
+    string $getSel[]=`textScrollList -q -si lstCSTsl`;
+    print $getSel;
+    select $getSel;
+    AlembicExportSelection;
 }
 
 global proc highlightSel()
 {
-tring $getSel[]=`textScrollList -q -si lstCSTsl`;
-select $getSel;
+    string $getSel[]=`textScrollList -q -si lstCSTsl`;
+    select $getSel;
 }
 
 global proc getABCOPSets()
 {
-string $camLst[]=`ls -r 1 -ca "*_*";
-string $camTopGrp[];
-string $abcopSetsLstCmd="textScrollList -e ";
-if (size($camLst)!=0)
-{
-for ($item in $camLst)
-{
-string $camNam[]=`listRelatives -p $item`;
-string $grpLev[]=firstParentOf($camNam[0];
-if (size($grpLev)!=0)
-{
-string $camgrp[]=stringToStringArray($grpLev,"|");
-stringArrayInsertAtIndex(0,$camTopGrp,$camGrp[0]);
-}
-else
-{$abcopSetsLstCmd+=(" -append2 "+$item);}
-}
-print $camTopGrp;
-$abcopSetsLstCmd+=(" -append "+$camTopGrp[0]);
-}
-string $abcOPSets[]=`ls -set "*AlembicOP*"`;
-if (size($abcOPSets)!=0)
-{
-for($item in $abcOPSets)
-{
-$abcopSetsLstCmd+=(" -append " +$item);
-}
-}
-if ((size($abcOPSets)+ size($camLst))!=0)
-{
-$abcopSetsLstCmd+=" lstCStsl";
-eval($abcopSetsLstCmd);
-}
+    string $camLst[]=`ls -r 1 -ca "*_*"`;
+    string $camTopGrp[];
+    string $abcopSetsLstCmd="textScrollList -e ";
+    if (size($camLst)!=0)
+    {
+        for ($item in $camLst)
+        {
+            string $camNam[]=`listRelatives -p $item`;
+            string $grpLev=firstParentOf($camNam[0]);
+            if (size($grpLev)!=0)
+            {
+                string $camGrp[]=stringToStringArray($grpLev,"|");
+                stringArrayInsertAtIndex(0,$camTopGrp,$camGrp[0]);
+            }
+            else
+                {$abcopSetsLstCmd+=(" -append2 "+$item);}
+        }
+        print $camTopGrp;
+        $abcopSetsLstCmd+=(" -append "+$camTopGrp[0]);
+    }
+    string $abcOPSets[]=`ls -set "*AlembicOP*"`;
+    if (size($abcOPSets)!=0)
+    {
+        for($item in $abcOPSets)
+        {
+            $abcopSetsLstCmd+=(" -append " +$item);
+        }
+    }
+    if ((size($abcOPSets)+ size($camLst))!=0)
+    {
+        $abcopSetsLstCmd+=" lstCStsl";
+        eval($abcopSetsLstCmd);
+    }
 }
 
 global proc tvc_AlembicOP()
 {
-if(`window -ex "tvc_AlembicOPWin"`)
-{deleteUI "tvc_AlembicOPWin";}
-window -t "Alembic Set Export" -wh 400 500 -s 0 "tvc_AlembicOPWin";
-columnLayout -cat "both" 6 -w 400 -rs 3 tvcABCExpMainLyt;
-text -l "List Cache Sets:" -h 22 lstCSTx;
-textScrollList -numberOfRows 20 -allowMultiSelection 1 -w 388 -c "goCacheCmd()" goCCCmd;
-showWindow tvc_AlembicOPWin;
+    if(`window -ex "tvc_AlembicOPWin"`)
+        {deleteUI "tvc_AlembicOPWin";}
+    window -t "Alembic Set Export" -wh 400 500 -s 0 "tvc_AlembicOPWin";
+    columnLayout -cat "both" 6 -w 400 -rs 3 tvcABCExpMainLyt;
+    text -l "List Cache Sets:" -h 22 lstCSTx;
+    textScrollList -numberOfRows 20 -allowMultiSelection 1 -w 388 lstCSTsl;
+    button -l "Go Export Alembic" -c "goCacheCmd()" -w 388 goCCCmd;
+    showWindow tvc_AlembicOPWin;
 }
+tvc_AlembicOP();
