@@ -1,7 +1,33 @@
-global proc trv_cleanStartUpMaya()
+string $srcFilePath="";
+global proc trv_cleanStartUpMaya($srcFilePath)
 {
 string $scriptFolder=`internalVal -usd`;
-sysFile -cp ($scriptFolder+"userSetup.py") "Source File Path";
+sysFile -cp ($scriptFolder+"userSetup.py") $srcFilePath;
+mayaEnvFileSpdUp();
 } 
 
-global
+global proc mayaEnvFileSpdUp()
+{
+	chdir (`internalVar -usd`+"/..");
+	string $MayaEnvFileLoc=`pwd`;
+	$openFile=`fopen ($MayaEnvFileLoc+"/Maya.env") "a+"`;
+	//string $getLine=`fgetline $openFile`;
+	string $newFileContent;
+	while (size($getLine)>0)
+	{
+		$getLine=`fgetline $openFile`;
+		if (startsWith($getLine,"MAYA_DISABLE_CLIC_IPM"))
+		{}
+		else if (startsWith($getLine,"MAYA_DISABLE_CIP"))
+		{}
+		else if (startsWith($getLine,"MAYA_DISABLE_CER"))
+		{}
+		else
+		{
+			$newFileContent+=$getLine;
+		}
+	}
+	$newFileContent+="\nMAYA_DISABLE_CLIC_IPM=1;\nMAYA_DISABLE_CIP=1;\nMAYA_DISABLE_CER;\n";
+	fwrite $openFile $newFileContent;
+	fclose $openFile;
+}
