@@ -1,0 +1,7 @@
+global proc trv_cleanStartUpMaya()
+{
+string $scriptFolder=`internalVal -usd`;
+sysFile -cp ($scriptFolder+"userSetup.py") "Source File Path";
+} 
+
+global
