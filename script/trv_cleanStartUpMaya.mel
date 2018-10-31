@@ -10,24 +10,39 @@ global proc mayaEnvFileSpdUp()
 {
 	chdir (`internalVar -usd`+"/..");
 	string $MayaEnvFileLoc=`pwd`;
-	$openFile=`fopen ($MayaEnvFileLoc+"/Maya.env") "a+"`;
-	//string $getLine=`fgetline $openFile`;
-	string $newFileContent;
+	$openFile=`fopen ($MayaEnvFileLoc+"/Maya.env") "r"`;
+	int $mDisIPM=0;int $mDisCIP=0;int $mDisCER=0;
+	string $getLine=`fgetline $openFile`;
+    string $newFileContent;
 	while (size($getLine)>0)
 	{
-		$getLine=`fgetline $openFile`;
+		
 		if (startsWith($getLine,"MAYA_DISABLE_CLIC_IPM"))
-		{}
-		else if (startsWith($getLine,"MAYA_DISABLE_CIP"))
-		{}
-		else if (startsWith($getLine,"MAYA_DISABLE_CER"))
-		{}
-		else
 		{
-			$newFileContent+=$getLine;
-		}
+        $mDisIPM=1;
+        $newFileContent+= "MAYA_DISABLE_CLIC_IPM=1\n";
+        }
+		else if (startsWith($getLine,"MAYA_DISABLE_CIP"))
+		{
+        $mDisCIP=1;
+        $newFileContent+= "MAYA_DISABLE_CIP=1\n";
+        }
+		else if (startsWith($getLine,"MAYA_DISABLE_CER"))
+		{
+        $mDisCER=1;
+        $newFileContent+= "MAYA_DISABLE_CER=1\n";
+        }
+		else
+		{$newFileContent+=$getLine}
+        $getLine=`fgetline $openFile`;
 	}
-	$newFileContent+="\nMAYA_DISABLE_CLIC_IPM=1;\nMAYA_DISABLE_CIP=1;\nMAYA_DISABLE_CER;\n";
-	fwrite $openFile $newFileContent;
+    if ($mDisIPM==0)
+    {$newFileContent+="\nMAYA_DISABLE_CLIC_IPM=1";}
+    if ($mDisCIP==0)
+    {$newFileContent+="\nMAYA_DISABLE_CIP=1";}
+    if ($mDisCER==0)
+    {$newFileContent+="\nMAYA_DISABLE_CER;\n";}
+	$openFile=`fopen ($MayaEnvFileLoc+"/Maya.env") "w"`;
+	fprint $openFile $newFileContent;
 	fclose $openFile;
 }
