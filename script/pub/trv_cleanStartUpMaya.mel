@@ -1,0 +1,66 @@
+//	==========================================================
+//	trv_cleanStartMaya ver 1.0
+//	by : JJ.Stranger
+//	at : 2018-10-31
+//	Description : Clean unnecessary plugin load and disable the
+//		cloud account network connection when start maya.
+//		and disable the error report when Maya crash.
+//	==========================================================
+
+string $pluginsLoadLs[]={"curveWrap","Type","modelingToolkit","redshift4maya","objExport","tiffFloatReader","AbcExport","AbcImport","OpenExrLoader","autoLoader","sceneAssembly"};
+global proc trv_cleanStartMaya(string $pluginsLoadLs[])
+{
+	python("pluginsToLoad=[]");
+	for ($item in $pluginsLoadLs)
+		{python("pluginsToLoad.append(\""+$item+"\")");}
+	string $usrSetupPyAddCnt=(
+		"#trv_cleanStartUpSettings_Begin#\n"+
+		"import os,stat\n"+
+		"from pymel import core as pmc\n"+
+		"pluginsToLoad="+python("str(pluginsToLoad)")+"\n"+
+		"def trv_nudeStartMaya(pluginsToLoad):\n"+
+		"\tdstPlgPrfFile=pmc.internalVar(upd=1)+'pluginPrefs.mel'\n"+
+		"\tif os.path.exists(dstPlgPrfFile):\n"+
+		"\t\tos.chmod(dstPlgPrfFile,stat.S_IWRITE)\n"+
+		"\t\tplgPrfCnt='//Maya Preload Plugin Prefrence\\n\\n'\n"+
+		"\t\tfor item in pluginsToLoad:\n"+
+		"\t\t\tplgPrfCnt+=('evalDeferred(\"autoLoadPlugin(\\\\\\\"\\\\\\\",\\\\\\\"'+item+'\\\\\\\",\\\\\\\"'+item+'\\\\\\\")\");\\n')\n"+
+		"\t\topPlgPrfFl=open(dstPlgPrfFile,'w')\n"+
+		"\t\topPlgPrfFl.write(plgPrfCnt)\n"+
+		"\t\topPlgPrfFl.close()\n"+
+		"\t\tos.environ['MAYA_DISABLE_CLIC_IPM']='1'\n"+
+		"\t\tos.environ['MAYA_DISABLE_CIP']='1'\n"+
+		"\t\tos.environ['MAYA_DISABLE_CER']='1'\n"+
+		"trv_nudeStartMaya(pluginsToLoad)\n"+
+		"#trv_cleanStartUpSettings_End#\n"
+		);
+	string $usrScriptFile=`internalVar -usd`+"userSetup.py";
+	int $openFile;
+	if (`file -q -ex $usrScriptFile`==0)
+		{$openFile=`fopen $usrScriptFile "w"`;}
+	else
+		{$openFile=`fopen $usrScriptFile "r"`;}
+	string $getLine=`fgetline $openFile`;
+	string $newScrCnt;
+	int $txMrk=0;int $txCount=0;
+	while (size($getLine)>0)
+	{
+		if (startsWith($getLine,"#trv_cleanStartUpSettings_Begin"))
+			{$txMrk=1;}
+		if (startsWith($getLine,"#trv_cleanStartUpSettings_End"))
+			{$txMrk=0;}
+		if ($txMrk==0 && startsWith($getLine,"#trv_cleanStartUpSettings_End")!=1)
+			{$newScrCnt+=$getLine;}
+		$getLine=`fgetline $openFile`;
+		$txCount++;
+	}
+	if (endsWith($newScrCnt,"\n")==0 && ($txCount>0))
+		{$newScrCnt+="\n\n";}
+	$newScrCnt+=$usrSetupPyAddCnt;
+	$openFile=`fopen $usrScriptFile "w"`;
+	fprint $openFile $newScrCnt;
+	fclose $openFile;
+
+	confirmDialog -t "Apply Next Time" -m "The Settings Will Take Effort Next Time You Start Maya." -b "	O~Kay~Bye~~	";
+}
+trv_cleanStartMaya($pluginsLoadLs);

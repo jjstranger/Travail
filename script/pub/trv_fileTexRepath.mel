@@ -1,0 +1,65 @@
+//  ==========================================================
+//  trv_fileTexRePath ver 1.0
+//  by : JJ.Stranger
+//  at : 2017-7-19
+//  Description : Batch change file texs' path.
+//  usage : select File Nodes to run this script.
+//  ==========================================================
+
+proc tvcTexRepathCmd()
+{
+    string $newPath=`textFieldButtonGrp -q -fi giveNewTxPath`;
+    
+    if(`filetest -e $newPath`==0)
+    {
+        error ("The given path is Not Exist!");
+    }
+    
+    string $sel[]=`ls -sl`;
+    string $filePath;
+    string $filename;
+    for ($item in $sel)
+    {
+        if(`nodeType $item`=="file")
+        {
+            $filePath=`getAttr ($item+".fileTextureName")`;
+            $filename=basename( $filePath, "" );
+            if(`filetest -e ($newPath+"/"+$filename)`)
+            {
+                setAttr -type "string" ($item+".fileTextureName") ($newPath+"/"+$filename);
+                print ($item+".fileTextureName" + " has reassigned to \""+$newPath+"/"+$filename+"\"\n");
+            }
+            else
+            {
+                warning ($item+".fileTextureName" + " can not be reassign to an non-exit path \""+$newPath+"/"+$filename+"\"\n");
+            }
+        }
+        else
+        {
+            warning ($item+".fileTextureName" + " is Not a file texture node!\n");
+        }
+    }
+}
+
+//filePathEditor -query -listDirectories ""
+global proc browse()
+{
+    string $getFilePath[]=`fileDialog2 -cap "Choose a folder..." -fm 2 -okc "OK"`;
+    textFieldButtonGrp -e -fi $getFilePath[0] giveNewTxPath;
+}
+
+
+global proc tvcTexRepathUI()
+{
+if(`window -ex tvcTexRpthWin`)
+    {deleteUI -window tvcTexRpthWin;}
+    window -w 400 -h 100 -s 1 -t "Textures Repath Tool -JJ.S" "tvcTexRpthWin";
+    columnLayout -w 400 -rs 6 -co both 10 tvcTexRpthFrame;
+    separator -st "none" -h 5;
+    text -l "更换贴图们的路径." -fn "fixedWidthFont" -en 0 "describe1";
+    text -l "选择贴图的file节点们，指定好新的路径文件夹。" -fn "fixedWidthFont" "describe2";
+    textFieldButtonGrp -w 450 -pht "指定新的路径文件夹" -bl "Choose..." -bc "browse" giveNewTxPath;
+    button -l "OK." -w 100 -c "tvcTexRepathCmd()" goTexRepath;
+    showWindow tvcTexRpthWin;
+}
+tvcTexRepathUI();

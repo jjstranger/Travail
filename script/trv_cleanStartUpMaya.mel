@@ -1,2 +1,0 @@
-string $pluginsLoadLs[]={“curveWrap”,“Type”,“modelingToolkit”,“redshift4maya”,“objExport”,“tiffFloatReader”,“AbcExport”,“AbcImport”,“OpenExrLoader”,“autoLoader”,“sceneAssembly”};
-global proc add2UserSetup
