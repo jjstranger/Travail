@@ -1,8 +1,9 @@
-////////////////////////////////
-//  Paper Fold Tool ver 1.0   //
-//      by : JJ.Stranger      //
-//      at : 2018-10-23       //
-////////////////////////////////
+//	==========================================
+//  Paper Fold Tool ver 1.0
+//      by : JJ.Stranger
+//      at : 2018-10-23
+//		description : A paper folding tool
+//	==========================================
 
 global proc trv_pprFldTl_readFldStcFrmScn()
 {
