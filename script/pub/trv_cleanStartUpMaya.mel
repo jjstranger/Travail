@@ -13,6 +13,7 @@ global proc trv_cleanStartMaya(string $pluginsLoadLs[])
 	python("pluginsToLoad=[]");
 	for ($item in $pluginsLoadLs)
 		{python("pluginsToLoad.append(\""+$item+"\")");}
+    string $ver=`about -v`;
 	string $usrSetupPyAddCnt=(
 		"#trv_cleanStartUpSettings_Begin#\n"+
 		"import os,stat\n"+
@@ -22,7 +23,7 @@ global proc trv_cleanStartMaya(string $pluginsLoadLs[])
 		"\tdstPlgPrfFile=pmc.internalVar(upd=1)+'pluginPrefs.mel'\n"+
 		"\tif os.path.exists(dstPlgPrfFile):\n"+
 		"\t\tos.chmod(dstPlgPrfFile,stat.S_IWRITE)\n"+
-		"\t\tplgPrfCnt='//Maya Preload Plugin Prefrence\\n\\n'\n"+
+		"\t\tplgPrfCnt='//Maya Preference "+$ver+" (Release 1)\\n//\\n'\n"+
 		"\t\tfor item in pluginsToLoad:\n"+
 		"\t\t\tplgPrfCnt+=('evalDeferred(\"autoLoadPlugin(\\\\\\\"\\\\\\\",\\\\\\\"'+item+'\\\\\\\",\\\\\\\"'+item+'\\\\\\\")\");\\n')\n"+
 		"\t\topPlgPrfFl=open(dstPlgPrfFile,'w')\n"+
