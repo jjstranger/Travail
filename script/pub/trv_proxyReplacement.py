@@ -1,12 +1,12 @@
-//  ==============================================
-//  trv_proxiesReplacement ver 1.0
-//  by : JJ.Stranger
-//  at : 2018.10.23
-//  ==============================================
-//  Description:
-//      Replace locate objects with proxy objects.
-//      The duplication is instancely and randomly.
-//
+##  ==============================================
+##  trv_proxiesReplacement ver 1.0
+##  by : JJ.Stranger
+##  at : 2018.10.23
+##  ==============================================
+##  Description:
+##      Replace locate objects with proxy objects.
+##      The duplication is instancely and randomly.
+##
 
 from pymel import core as pmc
 import random

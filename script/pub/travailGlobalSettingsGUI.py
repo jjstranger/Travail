@@ -1,8 +1,7 @@
-import pymel.core as pmc
+from pymel import core as pmc
 import os
-import travailGlobalSettings 
-print usr
-travailSettingsFile=(pmc.internalVar(upd=1)+"/travailGlobalSettings.conf")
+from travailGlobalSettings import *
+travailSettingsFile=(pmc.internalVar(upd=1)+"travailGlobalSettings.conf")
 	
 def openPathBrowser(filePath):
 
@@ -28,15 +27,18 @@ def svPrefs():
 	prjRoot=pmc.textFieldButtonGrp("prjRootPath",q=1,fi=1)
 	tvlRoot=pmc.textFieldButtonGrp("travailRootPath",q=1,fi=1)
 	lang=str(int(pmc.optionMenuGrp("lan",q=1,sl=1))-1)
-	prefFileContent="import getpass\nusr='"+usrNm+"'\nusrShort='"+usrShNm+"'\nusrJob='"+usrJob+"'\nprjRoot='"+prjRoot+"'\ntravailRoot='"+tvlRoot+"'\nlang="+lang+"\nloadSettingsState=1"
-	with open(travailSettingsFile,"w") as confFileOpen
-	confFileOpen.write(prefFileContent)
-	confFileOpen.close()
+	prefFileContent="\n## Travail Global Settings Begin ##\nusr='"+usrNm+"'\nusrShort='"+usrShNm+"'\nusrJob='"+usrJob+"'\nprjRoot='"+prjRoot+"'\ntravailRoot='"+tvlRoot+"'\nlang="+lang+"\nloadSettingsState=1\n## Travail Global Settings End ##\n"
+	
+	print prefFileContent
+	print travailSettingsFile
+	with open(travailSettingsFile,"w+") as confFileOpen:
+		confFileOpen.write(prefFileContent)
+
 	
 def travailGlobalSettingsWinUI():
 	if pmc.window("travailGlobalSettingsWin",ex=1):
 		pmc.deleteUI("travailGlobalSettingsWin")
-	pmc.window("travailGlobalSettingsWin",t="Travail Settings Window",w=500,h=600,s=0)
+	pmc.window("travailGlobalSettingsWin",t="Travail Settings Window",w=400,h=300,s=1)
 	pmc.columnLayout("trvGlbStsClmnLyt",co=("both",5))
 	pmc.separator(h=10)
 	pmc.textFieldGrp("usrTx",l="Current User Name: ",tx=usr,ed=1)
@@ -61,14 +63,14 @@ def travailGlobalSettingsWinUI():
 	pmc.separator(h=50,p="trvGlbStsClmnLyt")
 	
 	bottomLabTx="TRAVAIL"
-	bottomLabTxNew="-	"
+	bottomLabTxNew="\t\t\t\t-\t\t\t\t"
 	t=0
 	for L in bottomLabTx:
 		if t<(len(bottomLabTx)-1):
-			bottomLabTxNew+=(L+"	.	")
+			bottomLabTxNew+=(L+"\t\t\t\t.\t\t\t\t")
 			t+=1
 		else:
-			bottomLabTxNew+=(L+"	-")
+			bottomLabTxNew+=(L+"\t\t\t\t-")
 	pmc.text("blt",p="trvGlbStsClmnLyt",l=bottomLabTxNew,w=400,h=80)
 	pmc.showWindow("travailGlobalSettingsWin")
 	
