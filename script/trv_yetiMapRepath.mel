@@ -1,0 +1,81 @@
+proc string[] lsAllYetiNodesProc()
+{
+    string $getPgYetiNodesTransformNodes[]={};
+    for ($item in $getPgYetiNodesTransformNodes)
+    {
+        string $getNodeTr[]=`listRelatives -p $item`;
+        stringArrayInsertAtIndex(0,$getPgYetiNodesTransformNodes,$getNodeTr[0]);
+    }
+    return $getPgYetiNodesTransformNodes=sort($getPgYetiNodesTransformNodes);
+}
+
+proc lsYetiNodesInTsl()
+{
+    textScrollList -e -ra "lsYetiNodesTsl";
+    string $yetiNodesLs[]=lsAllYetiNodesProc();
+    for ($item in $yetiNodesLs)
+    {
+        textScrollList -e -a $item "lsYetiNodesTsl";
+    }
+}
+
+proc hilightSel()
+{
+    string $getTslSel[]=`textScrollList -q -si "lsYetiNodesTsl"`;
+    select $getTslSel;
+}
+
+proc brosweFilePath()
+{
+    string $getFilePath[]=`fileDialog2 -cap "Choose a folder..." -fm 2 -okc "OK"`
+    textFieldButtonGrp -e -fi $getFilePath[0] texPthTfb;
+}
+
+proc yetiTexRepathProc()
+{
+    string $newTexPath=`textFieldButtonGrp -e -fi $getFilePath[0] texPthTfb`;
+    $newTexPath=fromNativePath($newTexPath);
+    if (endsWith($newTexPath,"/")==0)
+        {$newTexPath+="/";}
+    string $yetiNodes[]={};
+    string $yetiNodesLs[]=`textScrollList -q -si "lsYetiNodesTsl"`;
+    if (size($yetiNodesLs)==0)
+    {
+        $yetiNodes=lsAllYetiNodesProc();
+    }
+    else
+    {
+        $yetiNodes=$yetiNodesLs;
+    }
+    for ($node in $yetiNodes)
+    {
+        string $getYetiTex[]=`pgYetiGraph -listNodes -type "texture" $node`;
+        for ($item in $getYetiTex)
+        {
+            string $getYetiNodeTxPath=`pgYetiGraph -node $item -param "file_name" -getParamValue $node`;
+            $getYetiNodeTxPath=fromNativePath($getYetiNodeTxPath);
+            string $toknLs[];
+            tokenize $getYetiNodeTxPath "/" $toknLs;
+            pgYetiGrapth -node $item -pram "file_name" -setParamValueString ($newTexPath+$toknLs[size($toknLs)-1]) $node;
+        }
+    }
+}
+
+proc yetiTexRepathUI()
+{
+    if (`window -ex "yetiTexRepathWin"`)
+    {
+        deleteUI -wnd "yetiTexRepathWin";
+    }
+    window -t "Yeti Map Repath Tool" -wh 360 500 -s 0 "yetiTexRepathWin";
+    columnLayout -w 350 -h 400 -rs 3 -cat "both" 6 "yetiTexRepMainClmnLyt";
+    text -l "List pgYetiMayaNodes:" -w 120 -h 22 "lsYetiNodesTx";
+    textScrollList -numberOfRows 20 -allowMltiSelection 1 -w 348 -sc "hilightSel()" "lsYetiNodesTsl";
+    lsYetiNodesInTsl();
+    separator -h 3 -st "none";
+    textFieldButtonGrp -l "Tex Path:" -cw3 50 245 50 -pht "New path for yeti Maps" -bl "broswe" -bc "brosweFilePath()" texPthTfb;
+    separator -h 3 -st "none";
+    button -l "Go Repath!" -w 348 -c "yetiTexRepathProc()" "goRepBtn";
+    showWindow "yetiTexRepathWin";
+}
+yetiTexRepathUI();
