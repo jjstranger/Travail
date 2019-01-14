@@ -1,3 +1,10 @@
+//	====================================================
+//  Yeti Maps Repath Tool ver 1.0
+//      by : JJ.Stranger
+//      at : 2019-01-14
+//		description : Repath yeti texture node's maps.
+//	====================================================
+
 proc string[] lsAllYetiNodesProc()
 {
     string $getPgYetiNodesTransformNodes[]={};
@@ -27,13 +34,13 @@ proc hilightSel()
 
 proc brosweFilePath()
 {
-    string $getFilePath[]=`fileDialog2 -cap "Choose a folder..." -fm 2 -okc "OK"`
+    string $getFilePath[]=`fileDialog2 -cap "Choose a folder..." -fm 2 -okc "OK"`;
     textFieldButtonGrp -e -fi $getFilePath[0] texPthTfb;
 }
 
 proc yetiTexRepathProc()
 {
-    string $newTexPath=`textFieldButtonGrp -e -fi $getFilePath[0] texPthTfb`;
+    string $newTexPath=`textFieldButtonGrp -q -fi texPthTfb`;
     $newTexPath=fromNativePath($newTexPath);
     if (endsWith($newTexPath,"/")==0)
         {$newTexPath+="/";}
@@ -70,10 +77,10 @@ proc yetiTexRepathUI()
     window -t "Yeti Map Repath Tool" -wh 360 500 -s 0 "yetiTexRepathWin";
     columnLayout -w 350 -h 400 -rs 3 -cat "both" 6 "yetiTexRepMainClmnLyt";
     text -l "List pgYetiMayaNodes:" -w 120 -h 22 "lsYetiNodesTx";
-    textScrollList -numberOfRows 20 -allowMltiSelection 1 -w 348 -sc "hilightSel()" "lsYetiNodesTsl";
+    textScrollList -numberOfRows 20 -allowMultiSelection 1 -w 348 -sc "hilightSel()" "lsYetiNodesTsl";
     lsYetiNodesInTsl();
     separator -h 3 -st "none";
-    textFieldButtonGrp -l "Tex Path:" -cw3 50 245 50 -pht "New path for yeti Maps" -bl "broswe" -bc "brosweFilePath()" texPthTfb;
+    textFieldButtonGrp -l "Tex Path:" -cw3 50 245 50 -pht "New path for yeti Maps" -bl "browse" -bc "brosweFilePath()" -w 488  texPthTfb;
     separator -h 3 -st "none";
     button -l "Go Repath!" -w 348 -c "yetiTexRepathProc()" "goRepBtn";
     showWindow "yetiTexRepathWin";
