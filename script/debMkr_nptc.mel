@@ -1,0 +1,101 @@
+string $instanceObjsGrpName="INSTANCE";
+
+string $instObjs[]={};
+string $sel[]=`ls -sl`;
+
+if (!`objExists "emitionNoise"`)
+{
+    $noisTex=`shadingNode -asTexture noise -n "emitionNoise"`;
+    string $plcmnt=`shadingNode -asUtility place2dTexture`;
+    connectAttr ($plcmnt+".outUV") ($noisTex+".uv");
+    connectAttr ($plcmnt+".outUvFilterSize") ($noisTex+".uvFilterSize");
+    setAttr "emitionNoise.ratio" 0.6;
+    setAttr "emitionNoise.frequencyRatio" 3.926574;
+    setAttr "emitionNoise.frequency" 8.041958;
+    setAttr "emitionNoise.density" 0.0524476;
+    setAttr "emitionNoise.spottyness" 1;
+    setAttr "emitionNoise.sizeRand" 1;
+    expression -s "emitionNoise.time=time;";
+    setAttr "emitionNoise.inflection" 1;
+}
+
+string $nptc[]=`nParticle -n "wallPtc#"`;
+string $xpr="expression -s \"";
+
+for ($item in $sel)
+{
+    string $emtr[]=`emitter -type surface  -r 500 -sro 0 -nuv 0 -cye none -cyi 1 -spd 7.047 -srn 3.423 -nsp 2.282 -tsp 0 -mxd 20 -mnd 5 -dx 1 -dy 0 -dz 0 -sp 0  $item`;
+    setAttr ($emtr[1]+".scaleRateBySpeed") 1;
+    setAttr ($emtr[1]+".enableTextureRate") 1;
+    connectAttr -force emitionNoise.outColor ($emtr[1]+".textureRate");
+    connectDynamic -em $emtr[1] $nptc[1]; 
+    addAttr -ln "baseRate"  -at double  -dv 1000 $emtr[1];
+    setAttr -e-keyable true ($emtr[1]+".baseRate");
+    addAttr -ln "rateMult"  -at double  -dv 1 $emtr[1];
+    setAttr -e-keyable true ($emtr[1]+".rateMult");
+    $xpr+=($emtr[1]+".rate="+$emtr[1]+".baseRate*"+$emtr[1]+".rateMult;");
+}
+$xpr+="\"";
+print $xpr;
+eval ($xpr);
+if (!`objExists "turblence_InstPtcs"`)
+{
+    string $trbltFld[]=`turbulence -pos 0 0 0 -m 255 -att 0 -f 0.008 -phaseX 0 -phaseY 0 -phaseZ 0 -noiseLevel 0 -noiseRatio 0.707  -mxd -1  -vsh none -vex 0 -vof 0 0 0 -vsw 360 -tsr 0.5 -n "turblence_InstPtcs"`;
+
+}
+
+string $lsNuc[]=`listConnections -s 1 -t "nucleus" $nptc[1]`;
+string $nclink[]=`stringArrayRemoveDuplicates($lsNuc)`;
+print $nptc[1];
+if (!`objExists "NUC_DebInst"`)
+{
+    
+    rename $nclink[0] NUC_DebInst;
+    setAttr "NUC_DebInst.gravity" 980;
+    setAttr "NUC_DebInst.startFrame" (`playbackOptions -q -min`);
+}
+else
+{
+    
+    select $nptc[1];
+    assignNSolver "NUC_DebInst";
+    select -cl;
+    //delete $nclink[0];
+}
+print $nptc[1];
+//nparticle attrs
+
+setAttr ($nptc[1]+".lifespanMode") 2;
+setAttr ($nptc[1]+".lifespan") 2;
+setAttr ($nptc[1]+".lifespanRandom") 0.5;
+setAttr ($nptc[1]+".friction") 0.834437;
+setAttr ($nptc[1]+".massScaleInput") 6;
+setAttr ($nptc[1]+".massScaleRandomize") 0.269939;
+setAttr ($nptc[1]+".inheritFactor") 0.332883;
+
+addAttr -ln "ind"  -dt doubleArray  $nptc[1];
+
+addAttr -ln "scl"  -dt doubleArray  $nptc[1];
+
+addAttr -ln "rot"  -dt vectorArray  $nptc[1];
+
+
+if(!`objExists "INSTANCE"`)
+{
+    particleInstancer   -rotation rot -scale scl -objectIndex ind $nptc[1];
+}
+else
+{
+    string $addInstExp="particleInstancer  -addObject ";
+    $instObjs=`listRelatives -c INSTANCE`;
+    for ($item in $instObjs)
+    {
+        $addInstExp+= (" -object "+$item);
+    }
+    $addInstExp+=" -rotation rot -scale scl -objectIndex ind $nptc[1];";
+    eval ($addInstExp);
+}
+dynExpression -s ("if(particleId%10==0)\n{scl=rand(4,6);}\nelse\n{scl=rand(.3,3);}\nrot=rand(<<0,0,0>>,<<360,360,360>>);\nind=rand(0,"+size($instObjs)+");") -c $nptc[1];
+dynExpression  -s "rot+=vel*0.1;" -rad $nptc[1];
+
+connectDynamic -f turblence_InstPtcs $nptc[1];

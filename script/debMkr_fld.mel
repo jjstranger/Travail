@@ -1,0 +1,89 @@
+float $globalScale=10.0;
+//create fluid container
+string $sel[]=`ls -sl`;
+string $getFlEmtNm[]={};
+string $flEmtNm[]=`fluidEmitter -type surface -der 50 -her 1 -fer 1 -fdr 2 -r 100 -cye none -cyi 1 -mxd 1 -mnd 0 $sel`;
+string $flCtnNm=`create3DFluid 10 10 10 100 100 100`;
+string $getFlTf[]=`listRelatives -p $flCtnNm`;
+setAttr ($getFlTf[0]+".scaleZ") $globalScale;
+setAttr ($getFlTf[0]+".scaleX") $globalScale;
+setAttr ($getFlTf[0]+".scaleY") $globalScale;
+//create noise emition noise texture
+if (!`objExists "fluidEmitionNoise"`)
+{
+    $noisTex=`shadingNode -asTexture noise -n "fluidEmitionNoise"`;
+    string $plcmnt=`shadingNode -asUtility place2dTexture`;
+    connectAttr ($plcmnt+".outUV") ($noisTex+".uv");
+    connectAttr ($plcmnt+".outUvFilterSize") ($noisTex+".uvFilterSize");
+    setAttr fluidEmitionNoise.ratio 0.6;
+    setAttr fluidEmitionNoise.frequencyRatio 4.0;
+    setAttr fluidEmitionNoise.frequency 8.0;
+    setAttr fluidEmitionNoise.density 0.1;
+    setAttr fluidEmitionNoise.spottyness 1;
+    setAttr fluidEmitionNoise.sizeRand 1;
+    expression -s "fluidEmitionNoise.time=time;";
+    setAttr "fluidEmitionNoise.inflection" 1;
+}
+//create fluidemmiter
+for ($i=0;$i<size($flEmtNm);$i++)
+{
+    if ($i%2==1)
+    {
+        connectDynamic -em $flEmtNm[$i] $flCtnNm;
+        setAttr ($flEmtNm[$i]+".useDistance") 1;
+        setAttr ($flEmtNm[$i]+".minDistance") -0.1;
+        setAttr ($flEmtNm[$i]+".maxDistance") 0.1;
+        setAttr ($flEmtNm[$i]+".turbulence") 10;
+        setAttr ($flEmtNm[$i]+".detailTurbulence") 0.394118;
+        setAttr ($flEmtNm[$i]+".speedMethod") 1;
+        setAttr ($flEmtNm[$i]+".inheritVelocity") .85;
+        setAttr ($flEmtNm[$i]+".directionalSpeed") 0;
+        connectAttr -force fluidEmitionNoise.outAlpha ($flEmtNm[$i]+".densityEmissionMap");
+
+    }
+}
+//create motion field
+for ($item in $sel)
+{
+    select $item;
+    select 	-add $flCtnNm;
+    string $mtnFldNm=`createMotionField`;
+    setAttr ($mtnFldNm+".magnitude") 0.8;
+	setAttr ($mtnFldNm+".attenuation") 0.3;
+	setAttr ($mtnFldNm+".inheritVelocity") 2;//org=12
+	setAttr ($mtnFldNm+".useDirection") 1;
+	setAttr ($mtnFldNm+".directionX") 1;
+	setAttr ($mtnFldNm+".directionZ") 1;
+    
+}
+//setting fluidShape
+setAttr ($flCtnNm+".boundaryY") 0;
+setAttr ($flCtnNm+".boundaryZ") 0;
+setAttr ($flCtnNm+".boundaryX") 0;
+//dyn
+setAttr ($flCtnNm+".gravity") 9.8;
+setAttr ($flCtnNm+".startFrame") (`playbackOptions -q -min`);
+setAttr ($flCtnNm+".autoResize") 1;
+setAttr ($flCtnNm+".resizeClosedBoundaries") 0;
+setAttr ($flCtnNm+".maxResolution") 500;
+setAttr ($flCtnNm+".autoResizeThreshold") 0.001;
+setAttr ($flCtnNm+".autoResizeMargin") 3;
+//density
+setAttr ($flCtnNm+".densityBuoyancy") -1;
+setAttr ($flCtnNm+".densityDissipation") 0.918919;
+setAttr ($flCtnNm+".densityDiffusion") 0.099099;
+setAttr ($flCtnNm+".densityNoise") 0.076577;
+setAttr ($flCtnNm+".tensionForce") 0.00900901;
+setAttr ($flCtnNm+".densityGradientForce") -5;
+setAttr ($flCtnNm+".velocitySwirl") 7.88;
+setAttr ($flCtnNm+".velocityNoise") 0.0684685;
+setAttr ($flCtnNm+".turbulenceStrength") 0.17117;
+// tex
+setAttr ($flCtnNm+".opacityTexture") 1;
+setAttr ($flCtnNm+".coordinateMethod") 1;
+setAttr ($flCtnNm+".frequencyRatio") 2.486679;
+setAttr ($flCtnNm+".depthMax") 5;
+//ilum
+setAttr ($flCtnNm+".selfShadowing") 1;
+setAttr ($flCtnNm+".shadowDiffusion") 2;
+setAttr ($flCtnNm+".ambientBrightness") 0.2;
