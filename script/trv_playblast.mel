@@ -1,4 +1,5 @@
-string $djvConvertPath="";
+string $djvConvertPath="\"C:/Program Files/DJV/bin/djv_convert\"";//djv_convert path
+
 string $getSN=`file -q - sn`;
 if ($getSN=="")
 {$getSN="untitled";}
@@ -8,6 +9,7 @@ if (`filetest -d ($getWorkspaceDir+"tmp/")`)
 else
 {sysFile -md ($getWorkspaceDir+"tmp/");}
 string $playblastFile=`playblast -fmt image -f ($getWorkspaceDir+"tmp/"+$getSN) -v 0 -orn 1 -fp 4 -p 100 -c "jpg" -qlt 70 -wh 1280 720`;
+//print $playblastFile;
 $playblastFile= `fromNativePath $playblastFile`;
 
 int $getStartFrame=`playbackOptions -q -min`;
@@ -28,5 +30,6 @@ string $pattenedEndFrame=$pre0s+string($getEndFrame);
 string $frameRangeStr=($pattenedStartFrame+"-"+$pattenedEndFrame);
 string $OPPath=`dirname $playblastFile`;
 
-$playblastFile=`substitude "#*#" $playblastFile $frameRangeStr`;
+$playblastFile=`substitute "#*#" $playblastFile $frameRangeStr`;
 system($djvConvertPath+" "+$playblastFile+" "+$OPPath+"/../"+$getSN+".mov");
+system($OPPath+"/../"+$getSN+".mov");
