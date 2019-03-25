@@ -1,0 +1,32 @@
+string $djvConvertPath="";
+string $getSN=`file -q - sn`;
+if ($getSN=="")
+{$getSN="untitled";}
+string $getWorkspaceDir=`workspace -q -dir`+"playblast/";
+if (`filetest -d ($getWorkspaceDir+"tmp/")`)
+{print "";}
+else
+{sysFile -md ($getWorkspaceDir+"tmp/");}
+string $playblastFile=`playblast -fmt image -f ($getWorkspaceDir+"tmp/"+$getSN) -v 0 -orn 1 -fp 4 -p 100 -c "jpg" -qlt 70 -wh 1280 720`;
+$playblastFile= `fromNativePath $playblastFile`;
+
+int $getStartFrame=`playbackOptions -q -min`;
+int $getEndFrame=`playbackOptions -q -max`;
+string $framePatten=`match "#*#" $playblastFile`;
+
+string $pre0s;
+$pre0s="";
+for ($i=0;$i<(size($framePatten)-size(string($getStartFrame)));$i++)
+{$pre0s+="0";}
+string $pattenedStartFrame=$pre0s+string($getStartFrame);
+
+$pre0s="";
+for ($i=0;$i<(size($framePatten)-size(string($getEndFrame)));$i++)
+{$pre0s+="0";}
+string $pattenedEndFrame=$pre0s+string($getEndFrame);
+
+string $frameRangeStr=($pattenedStartFrame+"-"+$pattenedEndFrame);
+string $OPPath=`dirname $playblastFile`;
+
+$playblastFile=`substitude "#*#" $playblastFile $frameRangeStr`;
+system($djvConvertPath+" "+$playblastFile+" "+$OPPath+"/../"+$getSN+".mov");
