@@ -1,3 +1,12 @@
+//trv_plablast
+//  ver:0.01
+//  by:JJ.Stranger
+//  at:20190326
+//
+
+
+proc trv_playblast()
+{
 string $djvConvertPath="\"C:/Program Files/DJV/bin/djv_convert\"";//djv_convert path
 
 string $getSN=`file -q - sn`;
