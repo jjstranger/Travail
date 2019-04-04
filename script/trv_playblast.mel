@@ -12,6 +12,8 @@ string $djvConvertPath="\"C:/Program Files/DJV/bin/djv_convert\"";//djv_convert 
 string $getSN=`file -q - sn`;
 if ($getSN=="")
 {$getSN="untitled";}
+else
+{$getSN=`basenameEx $getSN`;}
 string $getWorkspaceDir=`workspace -q -dir`+"playblast/";
 if (`filetest -d ($getWorkspaceDir+"tmp/")`)
 {print "";}
