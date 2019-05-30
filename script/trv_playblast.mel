@@ -40,7 +40,17 @@ string $pattenedEndFrame=$pre0s+string($getEndFrame);
 
 string $frameRangeStr=($pattenedStartFrame+"-"+$pattenedEndFrame);
 string $OPPath=`dirname $playblastFile`;
-
+string $getFPS=`currentUnit -q -t`;
+string $setFPS;
+if ($getFPS=="23.976fps")
+{$setFPS="23.976";}
+else if ($getFPS=="pal")
+{$setFPS="25";}
+else if ($getFPS=="ntsc")
+{$setFPS="30";}
+else {$setFPS="24";}
 $playblastFile=`substitute "#*#" $playblastFile $frameRangeStr`;
 system($djvConvertPath+" "+$playblastFile+" "+$OPPath+"/../"+$getSN+".mov");
-system($OPPath+"/../"+$getSN+".mov");
+system($OPPath+"/../"+$getSN+".mov"+" -default_speed "+$setFPS);
+｝
+//trv_playblast();
