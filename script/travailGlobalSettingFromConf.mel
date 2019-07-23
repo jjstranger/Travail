@@ -1,0 +1,19 @@
+string $travailSettingsFile=`internalVal -upd`+"travailGlobalSettings.conf";
+if (`file -q -ex ($travailSettingsFile)`)
+{
+int $f=fopen($travailSettingsFile,"r");
+string $allLines[]=freadAllLines($travailSettingsFile);
+for ($line in $allLines)
+{
+if(gmatch($line, "*=\"*\""))
+{eval("global string $"+$line+";"}
+else if(gmatch($line, "*=*.*[!\":/]"))
+{eval("global float $"+$line+";"}
+else if(gmatch($line, "*=[!a-zA-Z.\":/]"))
+{eval("global int $"+$line+";"}
+else
+{warning("!!Error in line: "+$line+"\n");}
+}
+}
+else
+{warning("!!Config file can not be Found: "+$travailSettingsFile);}
