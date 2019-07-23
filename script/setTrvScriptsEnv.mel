@@ -1,0 +1,30 @@
+global proc setTrvScriptsEnv(string $travailRoot)
+{
+    string $getPythonPathEnv=`getenv "PYTHONPATH"`;
+    string $getPythonPathLs[]=`stringToStringArray $getPythonPathEnv ";"`;
+
+    if (stringArrayContails($travailRoot,$getPythonPathLs))
+    {print "Travail scripts path is already in PYTHONPATH.\n";}
+    else
+    {
+        putenv "PYTHONPATH" $travailRoot;
+        print "Travail scripts path is added into PYTHONPATH.\n";
+    }
+    clear $getPythonPathLs;
+
+    string $getMayaScriptsEnv=`getenv "MAYA_SCRIPTS_PATH"`;
+    string $getMayaScriptsPathLs[]=`stringToStringArray $getMayaScriptsEnv ";"`;
+
+    if (stringArrayContains($travailRoot,$getMayaScriptsPathLs))
+    {print "Travail scripts path is already in MAYA_SCRIPTS_PATH.";}
+    else
+    {
+        putenv "MAYA_SCRIPT_PATH" $travailRoot;
+        print "Travail scripts path is added into MAYA_SCRIPTS_PATH.\n";
+    }
+    clear $getMayaScriptsPathLs;
+
+    eval("source \"/travailGlobalSettingsFromConf\"");
+    eval("setTrvScripteEnv($travailRoot)");
+
+}
