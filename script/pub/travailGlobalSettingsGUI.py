@@ -1,8 +1,27 @@
 from pymel import core as pmc
 import os
-from travailGlobalSettings import *
+#from travailGlobalSettings import *
 travailSettingsFile=(pmc.internalVar(upd=1)+"travailGlobalSettings.conf")
-	
+
+if (os.path.exists(travailSettingsFile)=0):
+	import getpass
+	projectsRoot=""
+	travailRoot=""
+	trvailLocal=""
+	djvRoot=travailRoot+"extention/djv/bin/"
+	hbRoot=travailRoot+"extention/handbrake/"
+	usr=getpass.getuser()
+	usrShort=""
+	usrJob=4
+	lang=0
+	localize=0
+	travailGlobalSettingsWinUI()
+else:
+	f=open(travailSettingsFile,"r")
+	prefLs=f.readline()
+	for item in prefLs:
+		exec(item)
+
 def openPathBrowser(filePath):
 
 	assignLocation=pmc.fileDialog2(fm=3,caption="Choose A Folder",dir=filePath)[0]
@@ -25,9 +44,14 @@ def svPrefs():
 	usrShNm=pmc.textFieldGrp("usrShtTx",q=1,tx=1)
 	usrJob=pmc.optionMenuGrp("jobs",q=1,v=1)
 	prjRoot=pmc.textFieldButtonGrp("prjRootPath",q=1,fi=1)
-	tvlRoot=pmc.textFieldButtonGrp("travailRootPath",q=1,fi=1)
+	trvRoot=pmc.textFieldButtonGrp("travailRootPath",q=1,fi=1)
+	trvLocal=pmc.textFieldButtonGrp("travailLocalPath",q=1,fi=1)
+	djvRoot=pmc.textFieldButtonGrp("djvRoot",q=1,fi=1)
+	hbRoot=pmc.textFieldButtonGrp("hbRoot",q=1,fi=1)
 	lang=str(int(pmc.optionMenuGrp("lan",q=1,sl=1))-1)
-	prefFileContent="\n## Travail Global Settings Begin ##\nusr='"+usrNm+"'\nusrShort='"+usrShNm+"'\nusrJob='"+usrJob+"'\nprjRoot='"+prjRoot+"'\ntravailRoot='"+tvlRoot+"'\nlang="+lang+"\nloadSettingsState=1\n## Travail Global Settings End ##\n"
+	prefFileContent="usr=\""+usrNm+"\"\nusrShort="\"+usrShNm+"\"\nusrJob="+usrJob\
+	+"\"\nprjRoot\""+prjRoot+"\"\ntravailRoot=\"+trvRoot+"\"\ntravailLocal=\"+trvLocal+"\"\ndjvRoot=\""+djvRoot\
+	+"\"\nhbRoot=\""+hbRoot+"\"\nlang="+lang+"\"\nlocalize=\""+localize+"\nloadSettingsState=1\n"
 	
 	print prefFileContent
 	print travailSettingsFile
@@ -53,10 +77,15 @@ def travailGlobalSettingsWinUI():
 	pmc.menuItem("rn",l="rendering")
 	pmc.textFieldButtonGrp("prjRootPath",l="Projects Root: ",fi=prjRoot,bl="Browse..",bc="getBrwsPath('textFieldButtonGrp','prjRootPath')")
 	pmc.textFieldButtonGrp("travailRootPath",l="Travail Root: ",fi=travailRoot,bl="Browse..",bc="getBrwsPath('textFieldButtonGrp','travailRootPath')")
-	pmc.optionMenuGrp("lan",l="Language: ")
+	pmc.checkBoxGrp("localize",l="Localize: ",h=22,ofc="pmc.textFieldButtonGrp(\"travailLocalPath\",e=1,en=0)",onc="pmc.textFieldButtonGrp(\"travailLocalPath\",e=1,en=1)")
+	pmc.textFieldButtonGrp("travailLocalPath",l="Travail Local: ",fi=travailLocal,bl="Browse..",bc="getBrwsPath('textFieldButtonGrp','travailLocalPath')")
+	pmc.textFieldButtonGrp("djvRoot",l="djv Root: ",fi=djvRoot,bl="Browse..",bc="getBrwsPath('textFieldButtonGrp','djvRoot')")
+	pmc.textFieldButtonGrp("hbRoot",l="handbrake Root: ",fi=hbRoot,bl="Browse..",bc="getBrwsPath('textFieldButtonGrp','hbRoot')")
+	pmc.optionMenuGrp("lang",l="Language: ")
 	pmc.menuItem("en",l="English",da=0)
 	pmc.menuItem("cn",l="Chinese",da=1)
-	
+	pmc.optionMenuGrp("lang",e=1,sl=lang)
+
 	pmc.rowLayout("svBtnRowLyt",nc=2,nch=2,h=50)
 	pmc.separator(st="none",w=280,p="svBtnRowLyt")
 	pmc.button("svPrefsBtn",l="Save Prefs",w=100,c="svPrefs()",p="svBtnRowLyt")
