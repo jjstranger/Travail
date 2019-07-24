@@ -1,0 +1,15 @@
+global proc string findTravail()
+{
+string $thisFile=`whatIs findTravail`;
+if ($thisFile=="Mel procedure entered interactively.")
+{
+confirmDialog -m "Drop the file into maya viewport!\nNot running in script editor!";
+error("Drop the file into maya viewport! Not running in script editor!");
+}
+else if (`startsWith $thisFile "Mel procedure found in:"`)
+{
+string $sliceLs[]=stringToStringArray($thisFile," ");
+return dirname($sliceLs[size($sliceLs)-1]);
+}
+}
+findTravail();
