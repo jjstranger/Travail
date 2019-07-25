@@ -1,15 +1,24 @@
 global proc string findTravail()
 {
-string $thisFile=`whatIs findTravail`;
-if ($thisFile=="Mel procedure entered interactively.")
-{
-confirmDialog -m "Drop the file into maya viewport!\nNot running in script editor!";
-error("Drop the file into maya viewport! Not running in script editor!");
+    string $thisFile=`whatIs findTravail`;
+    if ($thisFile=="Mel procedure entered interactively.")
+    {
+        confirmDialog -m "Drop the file into maya viewport!\nNot running in script editor!";
+        error("Drop the file into maya viewport! Not running in script editor!");
+    }
+    else if (`startsWith $thisFile "Mel procedure found in:"`)
+    {
+        string $sliceLs[]=stringToStringArray($thisFile," ");
+        return dirname($sliceLs[size($sliceLs)-1]);
+    }
 }
-else if (`startsWith $thisFile "Mel procedure found in:"`)
-{
-string $sliceLs[]=stringToStringArray($thisFile," ");
-return dirname($sliceLs[size($sliceLs)-1]);
-}
-}
-findTravail();
+global string $travailRoot=findTravail();
+if (endsWith($travailRoot,"/")==0)
+{$travailRoot+="/";}
+string $T_TaskScriptPath=$travailRoot+"/T-Task/maya/scripts/";
+//test exist
+
+eval("source \""+$T_TaskScriptsPath+"set_trvScriptsEnv.mel\"";)
+eval("setTrvScriptsEnv($T_TaskScriptsPath)");
+eval("source \""+$T_TaskScriptsPath+"set_loadSettingsFromConf.mel\"");
+python ("getTravailRoot=\""+$travailRoot+"\"\nimport travailGlobalSettingFromConf");

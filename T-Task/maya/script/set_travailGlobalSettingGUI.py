@@ -1,26 +1,6 @@
 from pymel import core as pmc
 import os
 #from travailGlobalSettings import *
-travailSettingsFile=(pmc.internalVar(upd=1)+"travailGlobalSettings.conf")
-
-if (os.path.exists(travailSettingsFile)=0):
-	import getpass
-	projectsRoot=""
-	travailRoot=""
-	trvailLocal=""
-	djvRoot=travailRoot+"extention/djv/bin/"
-	hbRoot=travailRoot+"extention/handbrake/"
-	usr=getpass.getuser()
-	usrShort=""
-	usrJob=4
-	lang=0
-	localize=0
-	travailGlobalSettingsWinUI()
-else:
-	f=open(travailSettingsFile,"r")
-	prefLs=f.readline()
-	for item in prefLs:
-		exec(item)
 
 def openPathBrowser(filePath):
 
@@ -104,5 +84,3 @@ def travailGlobalSettingsWinUI():
 	pmc.showWindow("travailGlobalSettingsWin")
 	
 #travailGlobalSettingsWinUI()
-if os.path.exists(travailSettingsFile)==0:
-	travailGlobalSettingsWinUI()

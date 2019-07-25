@@ -1,5 +1,6 @@
 global proc setTrvScriptsEnv(string $travailRoot)
 {
+//pythonpath
     string $getPythonPathEnv=`getenv "PYTHONPATH"`;
     string $getPythonPathLs[]=`stringToStringArray $getPythonPathEnv ";"`;
 
@@ -12,6 +13,9 @@ global proc setTrvScriptsEnv(string $travailRoot)
     }
     clear $getPythonPathLs;
 
+//sys python path
+
+//maya script path
     string $getMayaScriptsEnv=`getenv "MAYA_SCRIPTS_PATH"`;
     string $getMayaScriptsPathLs[]=`stringToStringArray $getMayaScriptsEnv ";"`;
 
@@ -24,7 +28,7 @@ global proc setTrvScriptsEnv(string $travailRoot)
     }
     clear $getMayaScriptsPathLs;
 
-    eval("source \"/travailGlobalSettingsFromConf\"");
+    eval("source \"/set_loadSettingsFromConf.mel\"");
     eval("setTrvScripteEnv($travailRoot)");
 
 }
