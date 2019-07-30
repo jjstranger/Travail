@@ -22,3 +22,6 @@ eval("source \""+$T_TaskScriptsPath+"set_trvScriptsEnv.mel\"";)
 eval("setTrvScriptsEnv($T_TaskScriptsPath)");
 eval("source \""+$T_TaskScriptsPath+"set_loadSettingsFromConf.mel\"");
 python ("getTravailRoot=\""+$travailRoot+"\"\nimport travailGlobalSettingFromConf");
+
+eval("source \""+$T_TaskScriptsPath+"buildT-TaskMenu.mel\"";)
+eval("chkUsr;buildT-TaskMenu($T-TaskRoot);ModCreateMenu mainCreateMenu;");
