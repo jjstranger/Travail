@@ -12,16 +12,15 @@ global proc string findTravail()
         return dirname($sliceLs[size($sliceLs)-1]);
     }
 }
-global string $travailRoot=findTravail();
+string $travailRoot=findTravail();
 if (endsWith($travailRoot,"/")==0)
 {$travailRoot+="/";}
-string $T_TaskScriptPath=$travailRoot+"/T-Task/maya/scripts/";
+string $T_TaskScriptsPath=$travailRoot+"T-Task/maya/scripts/";
 //test exist
 
-eval("source \""+$T_TaskScriptsPath+"set_trvScriptsEnv.mel\"";)
+eval("source \""+$T_TaskScriptsPath+"set_trvScriptsEnv.mel\"");
 eval("setTrvScriptsEnv($T_TaskScriptsPath)");
 eval("source \""+$T_TaskScriptsPath+"set_loadSettingsFromConf.mel\"");
 python ("getTravailRoot=\""+$travailRoot+"\"\nimport travailGlobalSettingFromConf");
-
-eval("source \""+$T_TaskScriptsPath+"buildT-TaskMenu.mel\"";)
+eval("source \""+$T_TaskScriptsPath+"buildT-TaskMenu.mel\"");
 eval("chkUsr;buildT-TaskMenu($T-TaskRoot);ModCreateMenu mainCreateMenu;");

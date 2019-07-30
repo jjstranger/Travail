@@ -4,7 +4,7 @@ global proc setTrvScriptsEnv(string $travailRoot)
     string $getPythonPathEnv=`getenv "PYTHONPATH"`;
     string $getPythonPathLs[]=`stringToStringArray $getPythonPathEnv ";"`;
 
-    if (stringArrayContails($travailRoot,$getPythonPathLs))
+    if (stringArrayContains($travailRoot,$getPythonPathLs))
     {print "Travail scripts path is already in PYTHONPATH.\n";}
     else
     {
