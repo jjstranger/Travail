@@ -1,0 +1,16 @@
+实际上是在临时文件夹创建一个临时文件，然后在另一个maya里面读取这个文件里面的内容
+第一个maya
+写入数据
+$exampleFileName = ( `internalVar -userTmpDir` + 'example.tmp' );
+$fileId=`fopen $exampleFileName 'w'`;
+fprint $fileId 'Hello there\n';
+fclose $fileId;
+
+
+第二个maya
+读取数据
+$exampleFileName = ( `internalVar -userTmpDir` + 'example.tmp' );
+$fileId=`fopen $exampleFileName 'r'`;
+string $data;
+$data =`fread $fileId $data`;
+print $data;

@@ -1,0 +1,16 @@
+string $outFile=`file -q -sn -shn`;
+if (size($outFile)==0)
+{
+	$outFile="untitled.ma";
+}
+string $outPath=`workspace -q -rd`;
+
+string $playBackLoopMode=`playbackOptions -q -l`;
+playbackOptions -l once;
+currentTime `playbackOptions -q -min`;
+
+dgtimer -on -reset;
+play -wait;
+dgtimer -off;
+dgtimer -q -o ($outPath+`basenameEx($outFile)`+"_dgTimer.txt");
+playbackOptions -l $playBackLoopMode;
