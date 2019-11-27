@@ -1,11 +1,12 @@
-# coding=utf-8
-import sys, os, datetime
-import glob
-from PySide.QtCore import *
-from PySide.QtGui import *
+#coding=utf-8
+import os #sys, datetime
+#import glob
+from PySide2 import QtCore as pqc
+from PySide2 import QtGui as pqg
+from PySide2 import QtWidgets as pqw
 #iconFolder = 'D:\\PyDev\\TVC_Submit\\ico\\'
 iconFolder = 'S:\\Dev\\pythonDev\\TVC_Submit\\ico\\'
-currentDir = u'd:/'
+currentDir = u'E:/'
 
 
 
@@ -35,14 +36,10 @@ def fileSizeCpt(fileFullPath):
 
 
 
-class tvcExporerMainWin(QMainWindow):
+class tvcExporerMainWin(pqw.QMainWindow):
     def __init__(self, parent=None):
-
         super(tvcExporerMainWin, self).__init__(parent)
-
-
-
-        self.resize(1284, 845)
+        self.resize(1600, 900)
         self.setWindowTitle('TVC Projects Explorer')
 
         #####Menu
@@ -55,51 +52,49 @@ class tvcExporerMainWin(QMainWindow):
 
         fileMenu.addAction('Add')
 
-        closeAct=QAction('Close',self)
+        closeAct=pqw.QAction('Close',self)
         closeAct.setShortcut('Ctrl+Q')
         closeAct.triggered.connect(self.close)
         #self.connect(closeAct,SIGNAL('triggered'),self.close)
         fileMenu.addAction(closeAct)
 
-        copyAct=QAction('Copy',self)
+        copyAct=pqw.QAction('Copy',self)
         editMenu.addAction(copyAct)
 
-        pasteAct=QAction('Paste',self)
+        pasteAct=pqw.QAction('Paste',self)
         editMenu.addAction(pasteAct)
-        explrModeAct = QAction('Explorer Mode', self)
+        explrModeAct = pqw.QAction('Explorer Mode', self)
         viewMenu.addAction(explrModeAct)
-        prdModeAct= QAction('Production Mode',self)
+        prdModeAct= pqw.QAction('Production Mode',self)
         viewMenu.addAction(prdModeAct)
 
-        chnLangAct=QAction(u'中文',self)
+        chnLangAct=pqw.QAction(u'中文',self)
         langMenu.addAction(chnLangAct)
-        engLangAct=QAction('English',self)
+        engLangAct=pqw.QAction('English',self)
         langMenu.addAction(engLangAct)
 
-        aboutAct=QAction('About',self)
+        aboutAct=pqw.QAction('About',self)
         helpMenu.addAction(aboutAct)
 
         ####End of Menu
 
-        mainWidget=QWidget()
+        mainWidget=pqw.QWidget()
         self.setCentralWidget(mainWidget)
 
 
-
         #####PathLine Grp
-        mainWidget.upBtn = QPushButton(parent=mainWidget)
-        mainWidget.upBtn.setIcon(QIcon(iconFolder + 'up.png'))
-        mainWidget.upBtn.setText('UP')
+        pathLineRowLayout = pqw.QHBoxLayout()
+        mainWidget.label_lookIn = pqw.QLabel("Look In: ",parent=mainWidget)
         # self.upBtn.isFlat()
-        mainWidget.pathLine = QLineEdit(parent=mainWidget)
+        mainWidget.pathLine = pqw.QLineEdit(parent=mainWidget)
         mainWidget.pathLine.setText(currentDir)
 
-        mainWidget.srchLine = QLineEdit(parent=mainWidget)
+        mainWidget.brswBtn = pqw.QPushButton("Browse..",parent=mainWidget)
 
-        pathLineRowLayout = QHBoxLayout()
-        pathLineRowLayout.addWidget(mainWidget.upBtn)
+        
+        pathLineRowLayout.addWidget(mainWidget.label_lookIn)
         pathLineRowLayout.addWidget(mainWidget.pathLine)
-        pathLineRowLayout.addWidget(mainWidget.srchLine)
+        pathLineRowLayout.addWidget(mainWidget.brswBtn)
         pathLineRowLayout.setStretch(1, 1)
         #####End of Path Line Grp
 
@@ -116,7 +111,7 @@ class tvcExporerMainWin(QMainWindow):
                     fileNameList.append(name)
 
             combNameList = dirNameList + fileNameList
-            mainWidget.fileListTable = QTableWidget(len(combNameList), 6)
+            mainWidget.fileListTable = pqw.QTableWidget(len(combNameList), 6)
             mainWidget.fileListTable.setHorizontalHeaderLabels([u'File', u'Last Update', u'Type', u'Size', u'Task', u'User'])
 
             i = 0
@@ -125,26 +120,26 @@ class tvcExporerMainWin(QMainWindow):
                 #print fileFullPath
                 baseName = os.path.basename(name)
                 if (os.path.isdir(fileFullPath)):
-                    addIcon = QTableWidgetItem(QIcon(iconFolder + 'folder.png'), baseName)
+                    addIcon = pqw.QTableWidgetItem(pqg.QIcon(iconFolder + 'folder.png'), baseName)
 
                     getFileSize = ""
                 else:
-                    addIcon = QTableWidgetItem(QIcon(iconFolder + 'maya.png'), baseName)
+                    addIcon = pqw.QTableWidgetItem(pqg.QIcon(iconFolder + 'maya.png'), baseName)
                     addIcon.setText(baseName)
                     getFileSize = fileSizeCpt(fileFullPath)
 
-                addFileName = QTableWidgetItem(baseName)
-                addLastTime = QTableWidgetItem(
+                addFileName = pqw.QTableWidgetItem(baseName)
+                addLastTime = pqw.QTableWidgetItem(
                 datetime.datetime.fromtimestamp(os.path.getmtime(fileFullPath)).strftime('%Y-%m-%d %H:%M:%S'))
-                addLastTime.setTextAlignment(Qt.AlignRight | Qt.AlignCenter)
-                addType = QTableWidgetItem('Type')
-                addType.setTextAlignment(Qt.AlignRight | Qt.AlignCenter)
-                addSize = QTableWidgetItem(getFileSize)
-                addSize.setTextAlignment(Qt.AlignRight | Qt.AlignCenter)
-                addTask = QTableWidgetItem('Task')
-                addTask.setTextAlignment(Qt.AlignRight | Qt.AlignCenter)
-                addUsr = QTableWidgetItem('User')
-                addUsr.setTextAlignment(Qt.AlignRight | Qt.AlignCenter)
+                addLastTime.setTextAlignment(pqc.Qt.AlignRight | pqc.Qt.AlignCenter)
+                addType = pqw.QTableWidgetItem('Type')
+                addType.setTextAlignment(pqc.Qt.AlignRight | pqc.Qt.AlignCenter)
+                addSize = pqw.QTableWidgetItem(getFileSize)
+                addSize.setTextAlignment(pqc.Qt.AlignRight | pqc.Qt.AlignCenter)
+                addTask = pqw.QTableWidgetItem('Task')
+                addTask.setTextAlignment(pqc.Qt.AlignRight | pqc.Qt.AlignCenter)
+                addUsr = pqw.QTableWidgetItem('User')
+                addUsr.setTextAlignment(pqc.Qt.AlignRight | pqc.Qt.AlignCenter)
 
                 mainWidget.fileListTable.setItem(i, 0, addIcon)
                 mainWidget.fileListTable.setItem(i, 1, addLastTime)
@@ -161,11 +156,11 @@ class tvcExporerMainWin(QMainWindow):
             mainWidget.fileListTable.horizontalHeader().setHighlightSections(False)
             mainWidget.fileListTable.verticalHeader().setVisible(False)
             mainWidget.fileListTable.horizontalHeader().resizeSection(0, 250)
-            mainWidget.fileListTable.setSelectionBehavior(QAbstractItemView.SelectRows)
-            mainWidget.fileListTable.setSelectionMode(QAbstractItemView.ExtendedSelection)
+            mainWidget.fileListTable.setSelectionBehavior(pqw.QAbstractItemView.SelectRows)
+            mainWidget.fileListTable.setSelectionMode(pqw.QAbstractItemView.ExtendedSelection)
             mainWidget.fileListTable.setAlternatingRowColors(True)
             mainWidget.fileListTable.verticalHeader().setDefaultSectionSize(50)
-            mainWidget.fileListTable.setIconSize(QSize(48,48))
+            mainWidget.fileListTable.setIconSize(pqc.QSize(48,48))
 
         fileListTable(currentDir)
 
@@ -176,75 +171,140 @@ class tvcExporerMainWin(QMainWindow):
 
         #####End of TabelWidget
 
-        mainWidget.navLabel=QLabel('Navigator')
-        mainWidget.guideList = QListWidget()
-        mainWidget.guideList.addItem('TVC Root')
-        mainWidget.guideList.show()
+        mainWidget.prjLabHBLyt=pqw.QHBoxLayout()
+        mainWidget.prjNavLabel=pqw.QLabel('Projects: ')
+        mainWidget.prjSrchTxtField=pqw.QLineEdit()
+        mainWidget.prjSrchBtn=pqw.QPushButton("Search")
+        mainWidget.prjList = pqw.QListWidget()
+        lb_prjOutline=pqw.QLabel("Project Outline: ")
+        tw_prjOutline=pqw.QTreeWidget()
+        #mainWidget.prjList.addItem('TVC Root')
+        #mainWidget.prjList.show()
+        mainWidget.prjLabHBLyt.addWidget(mainWidget.prjNavLabel)
+        mainWidget.prjLabHBLyt.addWidget(mainWidget.prjSrchTxtField)
+        mainWidget.prjLabHBLyt.addWidget(mainWidget.prjSrchBtn)
 
-        mainWidget.prvFiled = QWidget()
+        mainWidget.prvFiled = pqw.QWidget()
         mainWidget.prvFiled.setFixedSize(320, 240)
-        mainWidget.prvFiled.show()
+        #mainWidget.prvFiled.show()
+        
+        #add in
+        mainWidget.subPthBrswrVBLyt=pqw.QVBoxLayout()
+        mainWidget.pthTrainHBLyt=pqw.QHBoxLayout()
+        mainWidget.pthTrainHBLyt.setSpacing(1)
+        mainWidget.lb_pthTrainLbTx=pqw.QLabel(">>")
+        mainWidget.pthTrainHBLyt.addWidget(mainWidget.lb_pthTrainLbTx)
+        mainWidget.trainSectionsHBLyt=pqw.QHBoxLayout()
+        mainWidget.pthTrainHBLyt.addLayout(mainWidget.trainSectionsHBLyt)
+        for pthSec in pthTrainSect:
+            pthSecPb=pqw.QPushButton(pthSec)
+            #pthSecPb.setFixedHeight(22)
+            trainSectionsHBLyt.addWidget(pthSecPb)
+            
+        mainWidget.flSrchHBLyt=pqw.QHBoxLayout()
+        mainWidget.ln_flSrchLn=pqw.QLineEdit()
+        mainWidget.pb_flSrchPb=pqw.QPushButton("Search")
+        mainWidget.trainSectionsHBLyt.addStretch()
 
-        mainWidget.prptTable = QTableWidget(8, 2)
+        mainWidget.pthTrainHBLyt.addLayout(mainWidget.flSrchHBLyt)
+        mainWidget.flSrchHBLyt.addWidget(mainWidget.ln_flSrchLn)
+        mainWidget.ln_flSrchLn.setMaximumWidth(200)
+        mainWidget.flSrchHBLyt.addWidget(mainWidget.pb_flSrchPb)
+        mainWidget.pb_flSrchPb.setMaximumWidth(80)
+        ##add in End
+        
+        #file List
+        mainWidget.prptTable = pqw.QTableWidget(8, 2)
         mainWidget.prptTable.verticalHeader().setVisible(False)
         mainWidget.prptTable.setHorizontalHeaderLabels([u'Property', u'Value'])
         mainWidget.prptTable.horizontalHeader().setStretchLastSection(True)
-        prptNameItem=QTableWidgetItem('Name')
-        prptNameItem.setTextAlignment(Qt.AlignLeft)
+        prptNameItem=pqw.QTableWidgetItem('Name')
+        prptNameItem.setTextAlignment(pqc.Qt.AlignLeft)
         mainWidget.prptTable.setItem(0,0,prptNameItem)
-        prptTypeItem=QTableWidgetItem('Type')
-        prptTypeItem.setTextAlignment(Qt.AlignLeft)
+        prptTypeItem=pqw.QTableWidgetItem('Type')
+        prptTypeItem.setTextAlignment(pqc.Qt.AlignLeft)
         mainWidget.prptTable.setItem(1,0,prptTypeItem)
-        prptSizeItem = QTableWidgetItem('Size')
-        prptSizeItem.setTextAlignment(Qt.AlignLeft)
+        prptSizeItem = pqw.QTableWidgetItem('Size')
+        prptSizeItem.setTextAlignment(pqc.Qt.AlignLeft)
         mainWidget.prptTable.setItem(2,0, prptSizeItem)
-        prptLstdItem=QTableWidgetItem('Last Update')
-        prptLstdItem.setTextAlignment(Qt.AlignLeft)
+        prptLstdItem=pqw.QTableWidgetItem('Last Update')
+        prptLstdItem.setTextAlignment(pqc.Qt.AlignLeft)
         mainWidget.prptTable.setItem(3,0,prptLstdItem)
-        prptTskItem = QTableWidgetItem('Task')
-        prptTskItem.setTextAlignment(Qt.AlignLeft)
+        prptTskItem = pqw.QTableWidgetItem('Task')
+        prptTskItem.setTextAlignment(pqc.Qt.AlignLeft)
         mainWidget.prptTable.setItem(4, 0, prptTskItem)
-        prptUsrItem=QTableWidgetItem('User')
-        prptUsrItem.setTextAlignment(Qt.AlignLeft)
+        prptUsrItem=pqw.QTableWidgetItem('User')
+        prptUsrItem.setTextAlignment(pqc.Qt.AlignLeft)
         mainWidget.prptTable.setItem(5,0,prptUsrItem)
 
         mainWidget.prptTable.setShowGrid(False)
         mainWidget.prptTable.resizeColumnToContents(True)
         mainWidget.prptTable.setShowGrid(False)
-        mainWidget.prptTable.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        mainWidget.prptTable.setSelectionMode(QAbstractItemView.NoSelection)
-
-
+        mainWidget.prptTable.setEditTriggers(pqw.QAbstractItemView.NoEditTriggers)
+        mainWidget.prptTable.setSelectionMode(pqw.QAbstractItemView.NoSelection)
 
         # mainWidget.prptTable.horizontalHeader().setStretchLastSection(True)
-        mainWidget.prptTable.show()
+        #mainWidget.prptTable.show()
+        # file List End
+        
+        # fileName & Buttons
+        flNmLnHBLyt=pqw.QHBoxLayout()
+        lb_flNm=pqw.QLabel("File:")
+        le_flNmLE=pqw.QLineEdit()
+        cb_flTyp=pqw.QComboBox()
+        
+        flNmLnHBLyt.addWidget(lb_flNm)
+        flNmLnHBLyt.addWidget(le_flNmLE)
+        flNmLnHBLyt.addWidget(cb_flTyp)
+        
+        cmdPBHBLyt=pqw.QHBoxLayout()
+        pb_new=pqw.QPushButton("New")
+        pb_load=pqw.QPushButton("Load")
+        pb_nest=pqw.QPushButton("Nest")
+        pb_nth=pqw.QPushButton("Save")
+        
+        
+        cmdPBHBLyt.addWidget(pb_new)
+        cmdPBHBLyt.addWidget(pb_load)
+        cmdPBHBLyt.addWidget(pb_nest)
+        cmdPBHBLyt.addWidget(pb_nth)
+        
 
-        prptLayout = QVBoxLayout()
+        prptLayout = pqw.QVBoxLayout()
         prptLayout.addWidget(mainWidget.prvFiled)
         prptLayout.addWidget(mainWidget.prptTable)
-        navColmnLayout = QVBoxLayout()
-        navColmnLayout.addWidget(mainWidget.navLabel)
-        navColmnLayout.addWidget(mainWidget.guideList)
-        rowLstLayout = QHBoxLayout()
+        navColmnLayout = pqw.QVBoxLayout()
+        navColmnLayout.addLayout(mainWidget.prjLabHBLyt)
+        navColmnLayout.addWidget(mainWidget.prjList)
+        navColmnLayout.addWidget(lb_prjOutline)
+        navColmnLayout.addWidget(tw_prjOutline)
+        
+        rightBrswPanel=pqw.QVBoxLayout()
+        rightBrswPanel.addLayout(mainWidget.pthTrainHBLyt)
+        rightBrswPanel.addWidget(mainWidget.fileListTable)
+        rightBrswPanel.addLayout(flNmLnHBLyt)
+        rightBrswPanel.addLayout(cmdPBHBLyt)
+        
+        rowLstLayout = pqw.QHBoxLayout()
         rowLstLayout.addLayout(navColmnLayout)
-        rowLstLayout.addWidget(mainWidget.fileListTable)
-        rowLstLayout.addLayout(prptLayout)
+        rowLstLayout.addLayout(rightBrswPanel)
+        #rowLstLayout.addLayout(prptLayout)
         rowLstLayout.setStretch(1, 1)
-        rowLstLayout.setStretchFactor(mainWidget.guideList,2)
-        rowLstLayout.setStretchFactor(mainWidget.fileListTable, 5)
+        rowLstLayout.setStretchFactor(mainWidget.prjList,2)
+        rowLstLayout.setStretchFactor(rightBrswPanel, 5)
         rowLstLayout.setStretchFactor(prptLayout, 3)
 
 
 
-        mainLayout = QVBoxLayout()
+        mainLayout = pqw.QVBoxLayout()
         #mainLayout.addWidget(menuBar)
         mainLayout.addLayout(pathLineRowLayout)
         mainLayout.addLayout(rowLstLayout)
         mainWidget.setLayout(mainLayout)
 
         mainWidget.setParent(self)
-        mainWidget.setLayoutDirection(Qt.LayoutDirectionAuto)
-        mainWidget.show()
+        mainWidget.setLayoutDirection(pqc.Qt.LayoutDirectionAuto)
+        #mainWidget.show()
 
 
         #$$$%^&&^&^(*&_^_&+(*(^&$%@!^#@&$$$^%)(*&+)(+*(&*(^&$$#$!@#$!
@@ -262,28 +322,28 @@ class tvcExporerMainWin(QMainWindow):
                 usrInfo=mainWidget.fileListTable.item(rowNum,5)
 
 
-                addPrptName=QTableWidgetItem(nameInfo.text())
-                addPrptName.setTextAlignment(Qt.AlignRight | Qt.AlignCenter)
+                addPrptName=pqw.QTableWidgetItem(nameInfo.text())
+                addPrptName.setTextAlignment(pqc.Qt.AlignRight | pqc.Qt.AlignCenter)
                 mainWidget.prptTable.setItem(0, 1, addPrptName)
 
-                addPrptType=QTableWidgetItem(typeInfo.text())
-                addPrptType.setTextAlignment(Qt.AlignRight | Qt.AlignCenter)
+                addPrptType=pqw.QTableWidgetItem(typeInfo.text())
+                addPrptType.setTextAlignment(pqc.Qt.AlignRight | pqc.Qt.AlignCenter)
                 mainWidget.prptTable.setItem(1, 1, addPrptType)
 
-                addPrptSize = QTableWidgetItem(sizeInfo.text())
-                addPrptSize.setTextAlignment(Qt.AlignRight | Qt.AlignCenter)
+                addPrptSize = pqw.QTableWidgetItem(sizeInfo.text())
+                addPrptSize.setTextAlignment(pqc.Qt.AlignRight | pqc.Qt.AlignCenter)
                 mainWidget.prptTable.setItem(2, 1, addPrptSize)
 
-                addPrptLstUpdt = QTableWidgetItem(lastUpdtInfo.text())
-                addPrptLstUpdt.setTextAlignment(Qt.AlignRight | Qt.AlignCenter)
+                addPrptLstUpdt = pqw.QTableWidgetItem(lastUpdtInfo.text())
+                addPrptLstUpdt.setTextAlignment(pqc.Qt.AlignRight | pqc.Qt.AlignCenter)
                 mainWidget.prptTable.setItem(3, 1, addPrptLstUpdt)
 
-                addPrptTsk=QTableWidgetItem(tskInfo.text())
-                addPrptTsk.setTextAlignment(Qt.AlignRight | Qt.AlignCenter)
+                addPrptTsk=pqw.QTableWidgetItem(tskInfo.text())
+                addPrptTsk.setTextAlignment(pqc.Qt.AlignRight | pqc.Qt.AlignCenter)
                 mainWidget.prptTable.setItem(4, 1, addPrptTsk)
 
-                addPrptUsr=QTableWidgetItem(usrInfo.text())
-                addPrptUsr.setTextAlignment(Qt.AlignRight | Qt.AlignCenter)
+                addPrptUsr=pqw.QTableWidgetItem(usrInfo.text())
+                addPrptUsr.setTextAlignment(pqc.Qt.AlignRight | pqc.Qt.AlignCenter)
                 mainWidget.prptTable.setItem(5, 1, addPrptUsr)
 
         def openFileOfItem(self):
@@ -313,7 +373,7 @@ if __name__ == '__main__':
 
     tvcExplrWin = tvcExporerMainWin()
     #tvcExplrWin.languageChange()
-    tvcExplrWin.setFont(QFont('Microsoft YaHei', 10))  # set default font
+    tvcExplrWin.setFont(pqg.QFont('Microsoft YaHei', 9))  # set default font
 
     tvcExplrWin.show()
     #sys.exit(tvcExplrApp.exec_())
