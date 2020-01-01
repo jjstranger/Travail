@@ -66,7 +66,7 @@ class tvcExporerMainWin(pqw.QMainWindow):
         prdModeAct= pqw.QAction('Production Mode',self)
         viewMenu.addAction(prdModeAct)
 
-        chnLangAct=pqw.QAction(u'涓枃',self)
+        chnLangAct=pqw.QAction(u'中文',self)
         langMenu.addAction(chnLangAct)
         engLangAct=pqw.QAction('English',self)
         langMenu.addAction(engLangAct)
@@ -78,7 +78,6 @@ class tvcExporerMainWin(pqw.QMainWindow):
 
         mainWidget=pqw.QWidget()
         self.setCentralWidget(mainWidget)
-
 
         ##### prjRootFinder
         prjRootFinderHBLyt = pqw.QHBoxLayout()
@@ -93,7 +92,152 @@ class tvcExporerMainWin(pqw.QMainWindow):
         prjRootFinderHBLyt.setStretch(1, 1)
         #####End of Path Line Grp
 
-       
+        navigatorBVLyt_prjSrchHBlyt=pqw.QHBoxLayout()
+        prjSrchHBlyt_label_prj=pqw.QLabel('Projects: ')
+        prjSrchHBlyt_lineEdit_prjSrchText=pqw.QLineEdit()
+        prjSrchHBlyt_PBtn_prjSrchBtn=pqw.QPushButton("Search")
+        navigatorBVLyt_lst_prjLst = pqw.QListWidget()
+        navigatorBVLyt_label_prjOtln=pqw.QLabel("Project Outline: ")
+        navigatorBVLyt_treeWidget_prjOtlnLst=pqw.QTreeWidget()
+        navigatorBVLyt_prjSrchHBlyt.addWidget(prjSrchHBlyt_label_prj)
+        navigatorBVLyt_prjSrchHBlyt.addWidget(prjSrchHBlyt_lineEdit_prjSrchText)
+        navigatorBVLyt_prjSrchHBlyt.addWidget(prjSrchHBlyt_PBtn_prjSrchBtn)
+
+        #mainWidget.prvFiled = pqw.QWidget()
+        #mainWidget.prvFiled.setFixedSize(320, 240)
+        #mainWidget.prvFiled.show()
+        
+        fileLstOperatorVBLyt=pqw.QVBoxLayout()
+        fileLstOperatorVBLyt_pthTrainAndFileSrchHBLyt=pqw.QHBoxLayout()
+        pthTrainAndFileSrchHBLyt_pthTrainHBLyt=pqw.QHBoxLayout()
+        pthTrainAndFileSrchHBLyt_pthTrainHBLyt.setSpacing(1)
+        pthTrainHBLyt_label_pthTrainLabelText=pqw.QLabel(">>")
+        pthTrainAndFileSrchHBLyt_pthTrainHBLyt.addWidget(pthTrainHBLyt_label_pthTrainLabelText)
+        pthTrainHBLyt_trainSecsHBLyt=pqw.QHBoxLayout()
+        pthTrainAndFileSrchHBLyt_pthTrainHBLyt.addLayout(pthTrainHBLyt_trainSecsHBLyt)
+        for pthSec in pthTrainSect:
+            pthTrainHBLyt_pthSecPb=pqw.QPushButton(pthSec)
+            #pthTrainHBLyt_pthSecPb.setFixedHeight(22)
+            trainSectionsHBLyt.addWidget(pthTrainHBLyt_pthSecPb)
+            
+        trainSectionsHBLyt_flSrchHBLyt=pqw.QHBoxLayout()
+        flSrchHBLyt_lineEdit_fileSrchText=pqw.QLineEdit()
+        flSrchHBLyt_PBtn_flSrchPBtn=pqw.QPushButton("Search")
+        pthTrainHBLyt_trainSecsHBLyt.addStretch()
+
+        pthTrainAndFileSrchHBLyt_pthTrainHBLyt.addLayout(trainSectionsHBLyt_flSrchHBLyt)
+        trainSectionsHBLyt_flSrchHBLyt.addWidget(flSrchHBLyt_lineEdit_fileSrchText)
+        flSrchHBLyt_lineEdit_fileSrchText.setMaximumWidth(200)
+        trainSectionsHBLyt_flSrchHBLyt.addWidget(flSrchHBLyt_PBtn_flSrchPBtn)
+        flSrchHBLyt_PBtn_flSrchPBtn.setMaximumWidth(80)
+        
+        fileLstOperatorVBLyt_fileListTable = pqw.QTableWidget(20, 6)
+        fileLstOperatorVBLyt_fileListTable.setHorizontalHeaderLabels([u'File', u'Type', u'Size', u'Last Update',u'Task', u'User'])
+        fileLstOperatorVBLyt_fileListTable.setShowGrid(False)
+        fileLstOperatorVBLyt_fileListTable.resizeColumnToContents(True)
+        # fileLstOperatorVBLyt_fileListTable.horizontalHeader().setStretchLastSection(True)
+        fileLstOperatorVBLyt_fileListTable.horizontalHeader().setHighlightSections(False)
+        fileLstOperatorVBLyt_fileListTable.verticalHeader().setVisible(False)
+        fileLstOperatorVBLyt_fileListTable.horizontalHeader().resizeSection(0, 250)
+        fileLstOperatorVBLyt_fileListTable.setSelectionBehavior(pqw.QAbstractItemView.SelectRows)
+        fileLstOperatorVBLyt_fileListTable.setSelectionMode(pqw.QAbstractItemView.ExtendedSelection)
+        fileLstOperatorVBLyt_fileListTable.setAlternatingRowColors(True)
+        fileLstOperatorVBLyt_fileListTable.verticalHeader().setDefaultSectionSize(50)
+        fileLstOperatorVBLyt_fileListTable.setIconSize(pqc.QSize(48,48))
+        
+        '''
+        #property List
+        mainWidget.prptTable = pqw.QTableWidget(8, 2)
+        mainWidget.prptTable.verticalHeader().setVisible(False)
+        mainWidget.prptTable.setHorizontalHeaderLabels([u'Property', u'Value'])
+        mainWidget.prptTable.horizontalHeader().setStretchLastSection(True)
+        prptNameItem=pqw.QTableWidgetItem('Name')
+        prptNameItem.setTextAlignment(pqc.Qt.AlignLeft)
+        mainWidget.prptTable.setItem(0,0,prptNameItem)
+        prptTypeItem=pqw.QTableWidgetItem('Type')
+        prptTypeItem.setTextAlignment(pqc.Qt.AlignLeft)
+        mainWidget.prptTable.setItem(1,0,prptTypeItem)
+        prptSizeItem = pqw.QTableWidgetItem('Size')
+        prptSizeItem.setTextAlignment(pqc.Qt.AlignLeft)
+        mainWidget.prptTable.setItem(2,0, prptSizeItem)
+        prptLstdItem=pqw.QTableWidgetItem('Last Update')
+        prptLstdItem.setTextAlignment(pqc.Qt.AlignLeft)
+        mainWidget.prptTable.setItem(3,0,prptLstdItem)
+        prptTskItem = pqw.QTableWidgetItem('Task')
+        prptTskItem.setTextAlignment(pqc.Qt.AlignLeft)
+        mainWidget.prptTable.setItem(4, 0, prptTskItem)
+        prptUsrItem=pqw.QTableWidgetItem('User')
+        prptUsrItem.setTextAlignment(pqc.Qt.AlignLeft)
+        mainWidget.prptTable.setItem(5,0,prptUsrItem)
+
+        mainWidget.prptTable.setShowGrid(False)
+        mainWidget.prptTable.resizeColumnToContents(True)
+        mainWidget.prptTable.setShowGrid(False)
+        mainWidget.prptTable.setEditTriggers(pqw.QAbstractItemView.NoEditTriggers)
+        mainWidget.prptTable.setSelectionMode(pqw.QAbstractItemView.NoSelection)
+
+        # mainWidget.prptTable.horizontalHeader().setStretchLastSection(True)
+        #mainWidget.prptTable.show()
+        # file List End
+        '''
+
+        # fileNameEditor & Buttons
+        fileLstOperatorVBLyt_fileNameEditorHBLyt=pqw.QHBoxLayout()
+        fileNameEditorHBLyt_label_file=pqw.QLabel("File:")
+        fileNameEditorHBLyt_lineEdit_fileNameText=pqw.QLineEdit()
+        fileNameEditorHBLyt_comboBox_fileTypeFilter=pqw.QComboBox()
+        
+        fileLstOperatorVBLyt_fileNameEditorHBLyt.addWidget(fileNameEditorHBLyt_label_file)
+        fileLstOperatorVBLyt_fileNameEditorHBLyt.addWidget(fileNameEditorHBLyt_lineEdit_fileNameText)
+        fileLstOperatorVBLyt_fileNameEditorHBLyt.addWidget(fileNameEditorHBLyt_comboBox_fileTypeFilter)
+        
+        fileLstOperatorVBLyt_cmdPBtnHBLyt=pqw.QHBoxLayout()
+        cmdPBtnHBLyt_PBtn_new=pqw.QPushButton("New")
+        cmdPBtnHBLyt_PBtn_load=pqw.QPushButton("Load")
+        cmdPBtnHBLyt_PBtn_nest=pqw.QPushButton("Nest")
+        cmdPBtnHBLyt_PBtn_save=pqw.QPushButton("Save")
+        
+        fileLstOperatorVBLyt_cmdPBtnHBLyt.addWidget(cmdPBtnHBLyt_PBtn_new)
+        fileLstOperatorVBLyt_cmdPBtnHBLyt.addWidget(cmdPBtnHBLyt_PBtn_load)
+        fileLstOperatorVBLyt_cmdPBtnHBLyt.addWidget(cmdPBtnHBLyt_PBtn_nest)
+        fileLstOperatorVBLyt_cmdPBtnHBLyt.addWidget(cmdPBtnHBLyt_PBtn_save)
+
+        #prptLayout = pqw.QVBoxLayout()
+        #prptLayout.addWidget(mainWidget.prvFiled)
+        #prptLayout.addWidget(mainWidget.prptTable)
+        navigatorBVLyt = pqw.QVBoxLayout()
+        navigatorBVLyt.addLayout(navigatorBVLyt_prjSrchHBlyt)
+        navigatorBVLyt.addWidget(navigatorBVLyt_lst_prjLst)
+        navigatorBVLyt.addWidget(navigatorBVLyt_label_prjOtln)
+        navigatorBVLyt.addWidget(navigatorBVLyt_treeWidget_prjOtlnLst)
+               
+        fileLstOperatorVBLyt.addLayout(pthTrainAndFileSrchHBLyt_pthTrainHBLyt)
+        fileLstOperatorVBLyt.addWidget(fileLstOperatorVBLyt_fileListTable)
+        fileLstOperatorVBLyt.addLayout(fileLstOperatorVBLyt_fileNameEditorHBLyt)
+        fileLstOperatorVBLyt.addLayout(fileLstOperatorVBLyt_cmdPBtnHBLyt)
+        
+        rowLstLayout = pqw.QHBoxLayout()
+        rowLstLayout.addLayout(navigatorBVLyt)
+        rowLstLayout.addLayout(fileLstOperatorVBLyt)
+        #rowLstLayout.addLayout(prptLayout)
+        rowLstLayout.setStretch(1, 1)
+        rowLstLayout.setStretchFactor(navigatorBVLyt_lst_prjLst,2)
+        rowLstLayout.setStretchFactor(fileLstOperatorVBLyt, 5)
+        #rowLstLayout.setStretchFactor(prptLayout, 3)
+
+        mainLayout = pqw.QVBoxLayout()
+        #mainLayout.addWidget(menuBar)
+        mainLayout.addLayout(prjRootFinderHBLyt)
+        mainLayout.addLayout(rowLstLayout)
+        mainWidget.setLayout(mainLayout)
+
+        mainWidget.setParent(self)
+        mainWidget.setLayoutDirection(pqc.Qt.LayoutDirectionAuto)
+        #mainWidget.show()
+
+        #$$$%^&&^&^(*&_^_&+(*(^&$%@!^#@&$$$^%)(*&+)(+*(&*(^&$$#$!@#$!
+        #fileLstOperatorVBLyt_fileListTable.setRangeSelected(QTableWidgetSelectionRange(0, 0, 1, 1), True)
+
         '''
         #####TabelWidget_Filelist
         def fileListTable(currentDir):
@@ -167,163 +311,6 @@ class tvcExporerMainWin(pqw.QMainWindow):
 
         #####End of TabelWidget
         '''
-        
-        navigatorBVLyt_prjSrchHBlyt=pqw.QHBoxLayout()
-        prjSrchHBlyt_label_prj=pqw.QLabel('Projects: ')
-        prjSrchHBlyt_lineEdit_prjSrchText=pqw.QLineEdit()
-        prjSrchHBlyt_PBtn_prjSrchBtn=pqw.QPushButton("Search")
-        navigatorBVLyt_lst_prjLst = pqw.QListWidget()
-        navigatorBVLyt_label_prjOtln=pqw.QLabel("Project Outline: ")
-        navigatorBVLyt_treeWidget_prjOtlnLst=pqw.QTreeWidget()
-        #navigatorBVLyt_lst_prjLst.addItem('TVC Root')
-        #navigatorBVLyt_lst_prjLst.show()
-        navigatorBVLyt_prjSrchHBlyt.addWidget(prjSrchHBlyt_label_prj)
-        navigatorBVLyt_prjSrchHBlyt.addWidget(prjSrchHBlyt_lineEdit_prjSrchText)
-        navigatorBVLyt_prjSrchHBlyt.addWidget(prjSrchHBlyt_PBtn_prjSrchBtn)
-
-        #mainWidget.prvFiled = pqw.QWidget()
-        #mainWidget.prvFiled.setFixedSize(320, 240)
-        #mainWidget.prvFiled.show()
-        
-        #add in
-        #pthTrainSect={}#Remove Later
-        fileLstOperatorVBLyt=pqw.QVBoxLayout()
-        fileLstOperatorVBLyt_pthTrainAndFileSrchHBLyt=pqw.QHBoxLayout()
-        pthTrainAndFileSrchHBLyt_pthTrainHBLyt=pqw.QHBoxLayout()
-        pthTrainAndFileSrchHBLyt_pthTrainHBLyt.setSpacing(1)
-        pthTrainHBLyt_label_pthTrainLabelText=pqw.QLabel(">>")
-        pthTrainAndFileSrchHBLyt_pthTrainHBLyt.addWidget(pthTrainHBLyt_label_pthTrainLabelText)
-        pthTrainHBLyt_trainSecsHBLyt=pqw.QHBoxLayout()
-        pthTrainAndFileSrchHBLyt_pthTrainHBLyt.addLayout(pthTrainHBLyt_trainSecsHBLyt)
-        for pthSec in pthTrainSect:
-            pthTrainHBLyt_pthSecPb=pqw.QPushButton(pthSec)
-            #pthTrainHBLyt_pthSecPb.setFixedHeight(22)
-            trainSectionsHBLyt.addWidget(pthTrainHBLyt_pthSecPb)
-            
-        trainSectionsHBLyt_flSrchHBLyt=pqw.QHBoxLayout()
-        flSrchHBLyt_lineEdit_fileSrchText=pqw.QLineEdit()
-        flSrchHBLyt_PBtn_flSrchPBtn=pqw.QPushButton("Search")
-        pthTrainHBLyt_trainSecsHBLyt.addStretch()
-
-        pthTrainAndFileSrchHBLyt_pthTrainHBLyt.addLayout(trainSectionsHBLyt_flSrchHBLyt)
-        trainSectionsHBLyt_flSrchHBLyt.addWidget(flSrchHBLyt_lineEdit_fileSrchText)
-        flSrchHBLyt_lineEdit_fileSrchText.setMaximumWidth(200)
-        trainSectionsHBLyt_flSrchHBLyt.addWidget(flSrchHBLyt_PBtn_flSrchPBtn)
-        flSrchHBLyt_PBtn_flSrchPBtn.setMaximumWidth(80)
-        ##add in End
-        
-        fileLstOperatorVBLyt_fileListTable = pqw.QTableWidget(20, 6)
-        fileLstOperatorVBLyt_fileListTable.setHorizontalHeaderLabels([u'File', u'Type', u'Size', u'Last Update',u'Task', u'User'])
-        fileLstOperatorVBLyt_fileListTable.setShowGrid(False)
-        fileLstOperatorVBLyt_fileListTable.resizeColumnToContents(True)
-        # fileLstOperatorVBLyt_fileListTable.horizontalHeader().setStretchLastSection(True)
-        fileLstOperatorVBLyt_fileListTable.horizontalHeader().setHighlightSections(False)
-        fileLstOperatorVBLyt_fileListTable.verticalHeader().setVisible(False)
-        fileLstOperatorVBLyt_fileListTable.horizontalHeader().resizeSection(0, 250)
-        fileLstOperatorVBLyt_fileListTable.setSelectionBehavior(pqw.QAbstractItemView.SelectRows)
-        fileLstOperatorVBLyt_fileListTable.setSelectionMode(pqw.QAbstractItemView.ExtendedSelection)
-        fileLstOperatorVBLyt_fileListTable.setAlternatingRowColors(True)
-        fileLstOperatorVBLyt_fileListTable.verticalHeader().setDefaultSectionSize(50)
-        fileLstOperatorVBLyt_fileListTable.setIconSize(pqc.QSize(48,48))
-        
-        '''
-        #property List
-        mainWidget.prptTable = pqw.QTableWidget(8, 2)
-        mainWidget.prptTable.verticalHeader().setVisible(False)
-        mainWidget.prptTable.setHorizontalHeaderLabels([u'Property', u'Value'])
-        mainWidget.prptTable.horizontalHeader().setStretchLastSection(True)
-        prptNameItem=pqw.QTableWidgetItem('Name')
-        prptNameItem.setTextAlignment(pqc.Qt.AlignLeft)
-        mainWidget.prptTable.setItem(0,0,prptNameItem)
-        prptTypeItem=pqw.QTableWidgetItem('Type')
-        prptTypeItem.setTextAlignment(pqc.Qt.AlignLeft)
-        mainWidget.prptTable.setItem(1,0,prptTypeItem)
-        prptSizeItem = pqw.QTableWidgetItem('Size')
-        prptSizeItem.setTextAlignment(pqc.Qt.AlignLeft)
-        mainWidget.prptTable.setItem(2,0, prptSizeItem)
-        prptLstdItem=pqw.QTableWidgetItem('Last Update')
-        prptLstdItem.setTextAlignment(pqc.Qt.AlignLeft)
-        mainWidget.prptTable.setItem(3,0,prptLstdItem)
-        prptTskItem = pqw.QTableWidgetItem('Task')
-        prptTskItem.setTextAlignment(pqc.Qt.AlignLeft)
-        mainWidget.prptTable.setItem(4, 0, prptTskItem)
-        prptUsrItem=pqw.QTableWidgetItem('User')
-        prptUsrItem.setTextAlignment(pqc.Qt.AlignLeft)
-        mainWidget.prptTable.setItem(5,0,prptUsrItem)
-
-        mainWidget.prptTable.setShowGrid(False)
-        mainWidget.prptTable.resizeColumnToContents(True)
-        mainWidget.prptTable.setShowGrid(False)
-        mainWidget.prptTable.setEditTriggers(pqw.QAbstractItemView.NoEditTriggers)
-        mainWidget.prptTable.setSelectionMode(pqw.QAbstractItemView.NoSelection)
-
-        # mainWidget.prptTable.horizontalHeader().setStretchLastSection(True)
-        #mainWidget.prptTable.show()
-        # file List End
-        '''
-
-        # fileName & Buttons
-        fileLstOperatorVBLyt_fileNameEditorHBLyt=pqw.QHBoxLayout()
-        fileNameEditorHBLyt_label_file=pqw.QLabel("File:")
-        fileNameEditorHBLyt_lineEdit_fileNameText=pqw.QLineEdit()
-        fileNameEditorHBLyt_comboBox_fileTypeFilter=pqw.QComboBox()
-        
-        fileLstOperatorVBLyt_fileNameEditorHBLyt.addWidget(fileNameEditorHBLyt_label_file)
-        fileLstOperatorVBLyt_fileNameEditorHBLyt.addWidget(fileNameEditorHBLyt_lineEdit_fileNameText)
-        fileLstOperatorVBLyt_fileNameEditorHBLyt.addWidget(fileNameEditorHBLyt_comboBox_fileTypeFilter)
-        
-        fileLstOperatorVBLyt_cmdPBtnHBLyt=pqw.QHBoxLayout()
-        cmdPBtnHBLyt_PBtn_new=pqw.QPushButton("New")
-        cmdPBtnHBLyt_PBtn_load=pqw.QPushButton("Load")
-        cmdPBtnHBLyt_PBtn_nest=pqw.QPushButton("Nest")
-        cmdPBtnHBLyt_PBtn_save=pqw.QPushButton("Save")
-        
-        
-        fileLstOperatorVBLyt_cmdPBtnHBLyt.addWidget(cmdPBtnHBLyt_PBtn_new)
-        fileLstOperatorVBLyt_cmdPBtnHBLyt.addWidget(cmdPBtnHBLyt_PBtn_load)
-        fileLstOperatorVBLyt_cmdPBtnHBLyt.addWidget(cmdPBtnHBLyt_PBtn_nest)
-        fileLstOperatorVBLyt_cmdPBtnHBLyt.addWidget(cmdPBtnHBLyt_PBtn_save)
-        
-
-        #prptLayout = pqw.QVBoxLayout()
-        #prptLayout.addWidget(mainWidget.prvFiled)
-        #prptLayout.addWidget(mainWidget.prptTable)
-        navigatorBVLyt = pqw.QVBoxLayout()
-        navigatorBVLyt.addLayout(navigatorBVLyt_prjSrchHBlyt)
-        navigatorBVLyt.addWidget(navigatorBVLyt_lst_prjLst)
-        navigatorBVLyt.addWidget(navigatorBVLyt_label_prjOtln)
-        navigatorBVLyt.addWidget(navigatorBVLyt_treeWidget_prjOtlnLst)
-        
-        
-        fileLstOperatorVBLyt.addLayout(pthTrainAndFileSrchHBLyt_pthTrainHBLyt)
-        fileLstOperatorVBLyt.addWidget(fileLstOperatorVBLyt_fileListTable)
-        fileLstOperatorVBLyt.addLayout(fileLstOperatorVBLyt_fileNameEditorHBLyt)
-        fileLstOperatorVBLyt.addLayout(fileLstOperatorVBLyt_cmdPBtnHBLyt)
-        
-        rowLstLayout = pqw.QHBoxLayout()
-        rowLstLayout.addLayout(navigatorBVLyt)
-        rowLstLayout.addLayout(fileLstOperatorVBLyt)
-        #rowLstLayout.addLayout(prptLayout)
-        rowLstLayout.setStretch(1, 1)
-        rowLstLayout.setStretchFactor(navigatorBVLyt_lst_prjLst,2)
-        rowLstLayout.setStretchFactor(fileLstOperatorVBLyt, 5)
-        #rowLstLayout.setStretchFactor(prptLayout, 3)
-
-
-
-        mainLayout = pqw.QVBoxLayout()
-        #mainLayout.addWidget(menuBar)
-        mainLayout.addLayout(prjRootFinderHBLyt)
-        mainLayout.addLayout(rowLstLayout)
-        mainWidget.setLayout(mainLayout)
-
-        mainWidget.setParent(self)
-        mainWidget.setLayoutDirection(pqc.Qt.LayoutDirectionAuto)
-        #mainWidget.show()
-
-
-        #$$$%^&&^&^(*&_^_&+(*(^&$%@!^#@&$$$^%)(*&+)(+*(&*(^&$$#$!@#$!
-        #fileLstOperatorVBLyt_fileListTable.setRangeSelected(QTableWidgetSelectionRange(0, 0, 1, 1), True)
 
         def selectShowPrpt (self):
 

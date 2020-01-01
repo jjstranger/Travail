@@ -100,16 +100,16 @@ cmdPBHBLyt.addWidget(pb_nth)
 
 ##### Setting Win UI Below #####
 import os
-tvcRoot="E:/prjTst/"
+tvcRoot="C:/PRJ/dev/"
 lsDir=os.listdir(tvcRoot)
-testPrjDir="E:/prjTst/3001_JJS_PrjTst/"
+testPrjDir="C:/PRJ/dev/3001_JJS_PrjTst/"
 
 prjLs=[]
 nprjLs=[]
 
 # filter out Prjlist and nonPrjList in prj Root
 for item in lsDir:
-    if (item[0:3].isdigit()) & (item.count("_")>=2) & os.path.isdir("E:/prjTst/"+item):#filter RUles
+    if (item[0:3].isdigit()) & (item.count("_")>=2) & os.path.isdir(tvcRoot+item):#filter RUles
         prjLs.append(item)
     else:
         nprjLs.append(item)
@@ -128,7 +128,58 @@ def prjItmSl():
 
 lw_prjLst.itemClicked.connect(prjItmSl)
 
+def lsPrjOtln():
+    lw_favLst.clear()
+    curPrjCtntPath=tvcRoot+lw_prjLst.selectedItems()[0].text()
+    curPrjCtnt=os.listdir(curPrjCtntPath)
+    for item in curPrjCtnt:
+        if os.path.isfile(curPrjCtntPath+"/"+item):
+            curPrjCtnt.remove(item)
+    if os.path.exists(curPrjCtntPath+"/VFX/assets/"):
+        itm_toAss=lw_favlst.addItem(">>To Asset")
+    if os.path.exists(curPrjCtntPath+"/VFX/sequences/"):
+        itm_toAss=lw_favLst.addItem(">>To Sequence")
+    lw_favLst.addItems(sort(curPrjCtnt))
+    return curPrjCtntPath
+    
+def toShotcut():
+    curPrjCtntPath=lsPrjOtln()
+    if os.path.exists(curPrjCtntPath+"/VFX/asset/CGassets/"):
+        lsToAssCtnt=os.listdir(curPrjCtntPath+"/VFX/assets/CGassets/")
+        itm_shotcut_path=curPrjCtntPath+"/VFX/assets/CGassets/"
+    else:
+        scnLs=os.listdir(curPrjCtntPath+"/VFX/sequences/")
+        for item in scnLs:
+            if os.path.isfile(curPrjCtntPath+"/VFX/sequences/"+item):
+                scnLs.remove(item)
+        if len(lsToSeqCtnt)==1:
+            scnPth=curPrjCtntPath+"/VFX/sequences/"+lsToSeqCtnt[0]
+            shtLs=os.listdir(scnPth)
+            for item in shtLs:
+                if ((os.path.isfile(scnPth+"/"+item)) | (item.startswith("XXX_"))):
+                    shtLs.remove(item)
+                if len(shtLs)==1:
+                    lsScence=os.listdir(scnPth+"/"+shtLs[0]+"/CG/scenes/")
+                    itm_shotcut_path=scnPth+"/"+shtLs[0]+"/CG/scenes/"
+                else:
+                    itm_shotcut_path=scnPth
+        else:
+            itm_shotcut_path=curPrjCtntPath+"/VFX/sequences/"
+        return itm_shotcut_path
 
+def clickPrjOtlItm():
+    toShotcut()
+    flCtntLW.clear()
+    getFavSlItm=lw_favLst.selectedItems()[0].text()
+    if getFavSlItm.startswith(">>"):
+        lsFlBrws=os.listdir(itm_shotcut_path)
+        print lsFlBrws
+        flCtntLW.addItems(lsFlBrws)
+    else:
+        pass#lsFlBrws=os.listdir(
+
+lw_prjLst.itemClicked.connect(lsPrjOtln)
+lw_favLst.itemClicked.connect(clickPrjOtlItm)
 #Important: search filter and path train
 
 
