@@ -9,6 +9,7 @@ def trv_filterObjsByName(objFilterStringLs):
         pmc.confirmDialog(m="There are "+str(len(filtedObjLs))+" objects fit the name '"+item+"'.")
         pmc.select(filtedObjLs)
     return filtedObjLs
+    print "Filted Objs: "+filtedObjLs
 
 def filterJobSetLs(filtStr):#flst
     fLst=pmc.ls(filtStr,sets=1,r=1)
@@ -95,9 +96,8 @@ def getABCOPSets(setsLs,useOvrdPth):
                 ExprtFilePath=trv_getExportFilePath(getSetName)
         assmb=[setName,getSetName,ExprtStartFrame,ExprtEndFrame,ExprtFilePath,ExprtEnable]
         setsAssemble.append(assmb)
-        
     return setsAssemble
-
+    
 def getJobLst():
     try:
         len(getABCOPSets())>0
@@ -140,7 +140,7 @@ def cacheDir():
         getPrjDir+=(getABCSubDir+"/")
     return getPrjDir
         
-def addJobItmToLst(fLst):
+def addJobItmToLst(fLst):# fLst???
     pmc.textScrollList("lstCSTsl",e=1,ra=1)
     for job in fLst:
         if job[5]!=0:
@@ -151,6 +151,7 @@ def refreshJobLsCmd():
     
 def clickItmAction():
     sel=pmc.textScrollList("lstCSTsl",q=1,si=1)
+    #refreshJobLsCmd()#
     pmc.textScrollList("lstCSTsl",e=1,si=sel)
     pmc.select(pmc.textScrollList("lstCSTsl",q=1,sut=1),ne=1)
     
@@ -163,6 +164,7 @@ def doubleClickAction():
 def addNewExprtJobAction():
     addAttrsToExprtSets(createNewExprtJobSet())
     addJobItmToLst()
+    
 def ovrdPathSwthCmd(onoff):
     pmc.textFieldButtonGrp("glbOvrdPath",e=1,en=onoff)
 
@@ -171,6 +173,7 @@ def openFileDialogForOvrdPth():
     pmc.textFieldButtonGrp("glbOvrdPath",e=1,fi=getStartDir[0]+"/")
 
 def exprtToABCWinUI():
+    addAttrsToExprtSets(filterJobSetLs("*_AlembicOP*"))
     if pmc.window("exprtToABCWin",ex=1):
         pmc.deleteUI("exprtToABCWin",wnd=1)
     pmc.window("exprtToABCWin",t="TVC Export to ABC")
@@ -183,7 +186,7 @@ def exprtToABCWinUI():
     pmc.checkBoxGrp("GlbOptsCBxGrp",l="Global Options: ",l1="Halt viewport when caching",p="tvcABCMainLyt",
         l2="Overide export path",ncb=2,w=388,vr=1,on2="ovrdPathSwthCmd(1)",of2="ovrdPathSwthCmd(0)")
     pmc.textFieldButtonGrp("glbOvrdPath",p="tvcABCMainLyt",l="Global Path:",fi=cacheDir(),bl="Browse..",bc="openFileDialogForOvrdPth()",cw3=[80,250,58],w=388,en=0)
-    refreshJobLsCmd()
+    refreshJobLsCmd()#filterJobSetLs("*_AlembicOP*"))
     pmc.button("goCCCmd",l="Cache to ABC",w=388,c="trv_exportToABCAction(getJobLst()",p="tvcABCMainLyt",bgc=[0.4,0.28,0.2])
     pmc.showWindow("exprtToABCWin")
 
