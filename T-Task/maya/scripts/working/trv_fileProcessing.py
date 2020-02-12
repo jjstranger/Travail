@@ -1,9 +1,7 @@
 testFile="C:/PRJ/dev/3001_JJS_PrjTst/VFX/sequences/SC001/SH_001/CG/scenes/Effects/abcOpSet_Test_jjs_v001.mb"
 
-def getFileVersionStr(fileSourcName,verNumPad=3):
-    verRuleStr="[._][vV]" # version String init
-    for pad in range(verNumPad):
-        verRuleStr+="\d"
+def getFileVersionStr(fileSourcName):
+    verRuleStr="[\._][vV]\d+"
     import re
     strSpltLs=re.split(verRuleStr,fileSourceName)
     if len(strSpltLs)==2:
@@ -26,4 +24,13 @@ def filePathDestruction(filePath):
     return [fileDir,fileBaseName,fileSourceName,fileExt,fileVer,verPreStr,verPstStr]
 
     
-filePathDestruction(testFile)
+def raiseVerNum(filePath):
+    getFileInfs= filePathDestruction(filePath)
+    getFileDir=getFileInfs[0]
+    fileRule=getFileInfs[5]+"[\._][vV]\d+[\._]*"+getFileInfs[6]+"."+getFileInfs[3]
+    fileLs=[f for f in os.listdir(getFileDir) if re.findall(fileRule,f)]
+    verStrLs=[]
+    for f in fileLs:
+         erStrLs.append(int(re.findall("[\._][vV]\d+[\._]*",f)[-1][2:-1]))
+    verNum=str(max(verStrLs)+1)
+    return verNum.zfill(3)
