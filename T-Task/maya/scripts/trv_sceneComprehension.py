@@ -1,21 +1,21 @@
 import os,time
 from travailGlobalSetting import *
-from pymel import core as pmc
-
-curSceneName=''
-scenePathDestruc=[]
+#from pymel import core as pmc
+from maya import cmds as mc
+#curSceneName=''
+#scenePathDestruc=[]
 
 def scenePathStateCode():
-	if len(pmc.sceneName())==0:
-		return 1 # Unamed Scene.
+    global curSceneName,scenePathDestruc
+    curSceneName=mc.file(q=1,sn=1)
+	if len(curSceneName)==0:
+		return 1 # Mark as Unamed Scene.
 	else:
 		getPrjRoot=prjRoot
-		global curSceneName,scenePathDestruc
-		curSceneName=pmc.sceneName()
 		#scenePathDestruc=curSceneName.split('/') # 没用上？
 		if len(getPrjRoot)==0:
-			pmc.warning('travailRoot is not set.')
-		elif pmc.sceneName().startswith(getPrjRoot):
+			mc.warning('travailRoot is not set.')
+		elif curSceneName.startswith(getPrjRoot):
 			return 0 # Correct.
 		else:
 			return 2
@@ -35,7 +35,7 @@ def trv_guessPrjFrmCurScn():
 	searchLoop=5
 	setPrjPath='1' # "1" = workspace file not found.
 	if trv_guessFrmCurScn()[1]=='sequences':
-		parPath=os.path.abspath(os.path.dirname(pmc.sceneName()))
+		parPath=os.path.abspath(os.path.dirname(curSceneName))
 		for i in range(searchLoop):
 			parPath=os.path.abspath(os.path.dirname(parPath))
 			wsFilePth=os.path.abspath(parPath+'/workspace.mel')
@@ -124,9 +124,9 @@ def trv_sceneComprehension():
 			curRndPath=''
 		return [curPrjName,curAoS,curJob,curScene,curShot,curDailyFolder,curSetPrjDir,curRndPath]
 	elif scenePathStateCode()==1:
-		pmc.error('Unamed Scene!')
+		mc.error('Unamed Scene!')
 	elif scenePathStateCode()==2:
-		pmc.warning('Secen File is Not in Project Root')
+		mc.warning('Secen File is Not in Project Root')
 		curSetPrjDir=trv_guessPrjFrmCurScn()
 
 def printInfos()
