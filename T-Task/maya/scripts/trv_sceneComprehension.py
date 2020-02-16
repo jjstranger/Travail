@@ -1,30 +1,30 @@
 import os,time
-from travailGlobalSetting import *
+from set_loadSettingsFromConf import * ## may change Name to Fit later
 #from pymel import core as pmc
 from maya import cmds as mc
-#curSceneName=''
-#scenePathDestruc=[]
+projectRoot="C:/PRJ/dev/" ## test, remove later
+job="Fx" ## test, remove later
 
 def scenePathStateCode():
     global curSceneName,scenePathDestruc
     curSceneName=mc.file(q=1,sn=1)
-	if len(curSceneName)==0:
-		return 1 # Mark as Unamed Scene.
-	else:
-		getPrjRoot=prjRoot
-		#scenePathDestruc=curSceneName.split('/') # 没用上？
-		if len(getPrjRoot)==0:
-			mc.warning('travailRoot is not set.')
-		elif curSceneName.startswith(getPrjRoot):
-			return 0 # Correct.
-		else:
-			return 2
+    if len(curSceneName)==0:
+	    return 1 # Mark as Unamed Scene.
+    else:
+        getPrjRoot=projectRoot
+        scenePathDestruc=curSceneName.split('/')
+        if len(getPrjRoot)==0:
+            mc.warning('travailRoot is not set.')
+        elif curSceneName.startswith(getPrjRoot):
+            return 0 # Correct.
+        else:
+            return 2
 
-def trv_guessFrmCurScn() # Only available for VHQ TVC File structure
-	getPrjRoot=prjRoot
+def trv_guessFrmCurScn(): # Only available for VHQ TVC File structure
+	getPrjRoot=projectRoot
 	if getPrjRoot.endswith('/')==0:
 		getPrjRoot+='/'
-	scenePathDestruc=curSceneName[(len(prjRoot)):].split('/')
+	scenePathDestruc=curSceneName[(len(projectRoot)):].split('/')
 	if scenePathDestruc[2]=='sequences':
 		curScInfs=[scenePathDestruc[0],scenePathDestruc[2],scenePathDestruc[3],scenePathDestruc[4]]
 	elif scenePathDestruc[2]=='assets':
@@ -63,7 +63,7 @@ def trv_guessDailyFldFrmCurScn():
 	lfFldLs=['Lighting','lighting','light','Light','lgt','LGT','Lgt','lt','Lt','LT']
 	nullFldLs=['']
 	getGuessJob=trv_guessJobFrmCurScn()
-	if curSceneName.startswith(prjRoot):
+	if curSceneName.startswith(projectRoot):
 		if len(getGuessJob)>1:
 			if getGuessJob=='Effect':
 				mdLs=fxFldLs
@@ -101,7 +101,7 @@ def trv_guessRndPathFrmCurScn():
 			jobFld='Lighting'
 		else:
 			jobFld=''
-		renderPath=prjRoot+trv_guessFrmCurScn()[0]+'/VFX/sequences'+trv_guessFrmCurScn()[2]+'/'+trv_guessFrmCurScn()[3]+'/Zup_renders/'+jobFld
+		renderPath=projectRoot+trv_guessFrmCurScn()[0]+'/VFX/sequences'+trv_guessFrmCurScn()[2]+'/'+trv_guessFrmCurScn()[3]+'/Zup_renders/'+jobFld
 		return renderPath
 
 def trv_sceneComprehension():
@@ -129,7 +129,7 @@ def trv_sceneComprehension():
 		mc.warning('Secen File is Not in Project Root')
 		curSetPrjDir=trv_guessPrjFrmCurScn()
 
-def printInfos()
+def printInfos():
 	trv_sceneComprehension()
 	if scenePathStateCode()==0:
 		print '========== Scene Comprehension ==========\n'
@@ -145,3 +145,4 @@ def printInfos()
 				print '\t[Non-Exists]'
 			print  '\nRender Path: \n\t'+curRndPath
 		print '\n======= Scene Comprehension Finish ======='
+printInfos()
