@@ -1,36 +1,44 @@
-testFile="C:/PRJ/dev/3001_JJS_PrjTst/VFX/sequences/SC001/SH_001/CG/scenes/Effects/abcOpSet_Test_jjs_v001.mb"
-import os,re
+import os, re
+class publishFilePath(object):
+    def getFileVersionStr(self,fileCoreName,verStrRule):
+	    strSpltLs=re.split(verStrRule,fileCoreName)
+	    if len(strSpltLs)==2:
+	        fileVerStr=re.search(verStrRule,fileCoreName).group()[2:]
+	        return [fileVerStr,strSpltLs[0],strSpltLs[1]]
+	    else:
+	        return [None,strSpltLs[0],""]
 
-verRuleStr="[\._][vV]\d+[\._]*"
-def getFileVersionStr(fileSourceName,verRuleStr="[\._][vV]\d+[\._]*"):
-    strSpltLs=re.split(verRuleStr,fileSourceName)
-    if len(strSpltLs)==2:
-        fileVerStr=re.search(verRuleStr,fileSourceName).group()[2:]
-        return [fileVerStr,strSpltLs[0],strSpltLs[1]]
-    else:
-        return [None,strSpltLs[0],""]
+    def composeSrcFileName(self,pubDir,srcFileName,verStrRule):
+		fileCoreName=srcFileName.rsplit(".",1)[0]
+		fileExt=srcFileName.rsplit(".",1)[1]
+		getVerStrLs=self.getFileVersionStr(fileCoreName,verStrRule)
+		fileVer=getVerStrLs[0]
+		verPreStr= getVerStrLs[1]
+		verPstStr= getVerStrLs[2]
+		fileFilter=verPreStr+verStrRule+verPstStr+"."+fileExt
+		if fileVer==None:
+		    fileName_OUT=verPreStr+"_v000."+fileExt
+		else:
+		    fileLs=[f for f in os.listdir(pubDir) if re.findall(fileFilter,f)]
+		    verStrLs=[]
+		    for f in fileLs:
+		        verStrLs.append(int(re.findall(verStrRule,f)[-1][2:-1]))
+		    verStr="_v"+str(max(verStrLs)+1).zfill(3)
+		    fileName_OUT=verPreStr+verStr+verPstStr+"."+fileExt
+		return fileName_OUT
+        
+    def __init__(self, pubDir,srcFileName,verStrRule="[\._][vV]\d+[\._]*"):
+		#super(ClassName, self).__init__()
+		#self.arg = arg
+		self.pubDir=pubDir
+		self.sourceFile=srcFileName
+		self.fileCoreName=srcFileName.rsplit(".",1)[0]
+		self.fileExt=srcFileName.rsplit(".",1)[1]
+		self.fileVer=self.getFileVersionStr(self.fileCoreName,verStrRule)[0]
+		self.pubFile=self.composeSrcFileName(pubDir,srcFileName,verStrRule)
 
-def filePathDestruction(filePath,verRuleStr="[\._][vV]\d+[\._]*"):
-    fileDir=os.path.dirname(filePath)
-    fileBaseName=os.path.basename(filePath)
-    getFileNameSplit=fileBaseName.rsplit(".",1)
-    fileSourceName=getFileNameSplit[0]
-    fileExt=getFileNameSplit[1]
-    getVerStrLs=getFileVersionStr(fileSourceName,verRuleStr)
-    fileVer=getVerStrLs[0]
-    verPreStr= getVerStrLs[1]
-    verPstStr= getVerStrLs[2]
-    return [fileDir,fileBaseName,fileSourceName,fileExt,fileVer,verPreStr,verPstStr]
-
-def raiseVerNum(filePath,verRuleStr="[\._][vV]\d+[\._]*"):
-    getFileInfs= filePathDestruction(filePath)
-    getFileDir=getFileInfs[0]
-    fileRule=getFileInfs[5]+verRuleStr+getFileInfs[6]+"."+getFileInfs[3]
-    fileLs=[f for f in os.listdir(getFileDir) if re.findall(fileRule,f)]
-    verStrLs=[]
-    for f in fileLs:
-         verStrLs.append(int(re.findall(verRuleStr,f)[-1][2:-1]))
-    verNum=str(max(verStrLs)+1)
-    return verNum.zfill(3)
-
-print raiseVerNum(testFile,verRuleStr)
+''' test
+pubDir="C:/PRJ/dev/3001_JJS_PrjTst/VFX/sequences/SC001/SH_001/CG/scenes/Effects/"
+srcFile="abcOpSet_Test_jjs_v001.mb"
+print publishFilePath(pubDir,srcFile).pubFile
+'''
