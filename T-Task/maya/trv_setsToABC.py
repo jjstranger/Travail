@@ -1,8 +1,5 @@
 from pymel import core as pmc
-from PySide2.QtCore import *
-from PySide2.QtWidgets import *
-from PySide2.QtGui import *
-from Pyside2.QtUiTools import *
+from PySide2 import QtCore, QtWidgets, QtUiTools,QtGui
 from shiboken2 import wrapInstance
 from maya.OpenMayaUI import * as omui
 
