@@ -148,16 +148,17 @@ def cacheDir():
         
 def addJobItmToLst(fLst):
     mc.textScrollList("lstCSTsl",e=1,ra=1,ri=1)
+
     for line in range(len(fLst)):
         fl=[]
-        fl.append(fLst[line])
-        jobLs=getJobLst(fl)
-        job=jobLs[0]
+        #fl.append(fLst[line])
+        jobLs=getJobLst(fLst[line])
+        job=jobLs[line]
         if job[5]!=0:
             mc.textScrollList("lstCSTsl",e=1,append=job[0].replace("_"+MatchString,""),utg=job[0],lf=((line+1),"boldLabelFont"))
         else:
             mc.textScrollList("lstCSTsl",e=1,append=job[0].replace("_"+MatchString,""),utg=job[0],lf=((line+1),"smallObliqueLabelFont"))
-            #mc.deleteUI("lstCSTsl",ctl=1)
+
 def refreshJobLsCmd():
     addJobItmToLst(getABCOPSets(filterJobSetLs("*_"+MatchString+"*"),0))
     
